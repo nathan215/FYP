@@ -12,18 +12,18 @@ def store_into_database(test_record_data):
     engine = create_engine(f'postgresql+psycopg2://{username}:{password}@{host}:{port}/{database_name}')
 
     recording_data = {
-        'id' : 1,
+        'id' : 2,
         'simulate_or_not': test_record_data['stimulate'],
         'latitude': None,
         'longitude': None,
         'start_time': datetime.now(),
-        'description': f"C: {test_record_data['C']}, n: {test_record_data['n']}, Error: [Your error here]"
+        'description': f"C: {test_record_data['C']}, n: {test_record_data['n']}, Noise: 3+0.002dist"
     }
     recording_df = pd.DataFrame([recording_data])
     
 
     for record in test_record_data['rssi_records']:
-        record['record_id'] = 1
+        record['record_id'] = 2
 
     test_records_df = pd.DataFrame(test_record_data['rssi_records'])
 
@@ -61,13 +61,13 @@ def generate_dataset(stimulate, n, C):
     store_into_database(test_record)
     
 def generate_rssi(horizen_distance, z, n, C):
-    mean_noise = 6 + 0.002 * horizen_distance + z * 0.001
+    mean_noise = 3 + 0.002 * np.sqrt(horizen_distance**2 + z **2)
     noise = np.random.normal(0, mean_noise)
     rssi = C - 10 * n * np.log10(np.sqrt(horizen_distance**2 + z**2)) + noise
     return rssi
 
 
-generate_dataset(True, 2, -50)
+generate_dataset(True, 2, -40)
 
 
 
