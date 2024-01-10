@@ -1,5 +1,7 @@
+import Wrapper from "../components/Wrapper";
+
 const MapRoute = () => {
-  return <div>MapRoute</div>;
+  return <Wrapper />;
 };
 
 export default MapRoute;

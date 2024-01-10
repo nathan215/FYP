@@ -1,8 +1,7 @@
-import { useParams } from "react-router-dom";
+import Wrapper from "../components/Wrapper";
 
 const RealTimeData = () => {
-  //   const { id } = useParams();
-  return <div>Real Time Data</div>;
+  return <Wrapper />;
 };
 
 export default RealTimeData;

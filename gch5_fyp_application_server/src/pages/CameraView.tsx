@@ -1,9 +1,7 @@
+import Wrapper from "../components/Wrapper";
+
 const CameraView = () => {
-  return (
-    <>
-      <h3>Drone's Camera</h3>
-    </>
-  );
+  return <Wrapper />;
 };
 
 export default CameraView;

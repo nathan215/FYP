@@ -9,33 +9,43 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import LayersIcon from "@mui/icons-material/Layers";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import { LinkedCamera } from "@mui/icons-material";
+import { Link } from "react-router-dom";
 
 export const mainListItems = (
   <React.Fragment>
-    <ListItemButton>
-      <ListItemIcon>
-        <DashboardIcon />
-      </ListItemIcon>
-      <ListItemText primary="Dashboard" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <LinkedCamera />
-      </ListItemIcon>
-      <ListItemText primary="Camera" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <Map />
-      </ListItemIcon>
-      <ListItemText primary="Map" />
-    </ListItemButton>
-    <ListItemButton>
-      <ListItemIcon>
-        <BarChartIcon />
-      </ListItemIcon>
-      <ListItemText primary="Data" />
-    </ListItemButton>
+    <Link to={"/"}>
+      <ListItemButton>
+        <ListItemIcon>
+          <DashboardIcon />
+        </ListItemIcon>
+        <ListItemText primary="Dashboard" />
+      </ListItemButton>
+    </Link>
+
+    <Link to={"/camera-view"}>
+      <ListItemButton>
+        <ListItemIcon>
+          <LinkedCamera />
+        </ListItemIcon>
+        <ListItemText primary="Camera" />
+      </ListItemButton>
+    </Link>
+    <Link to={"/map-route"}>
+      <ListItemButton>
+        <ListItemIcon>
+          <Map />
+        </ListItemIcon>
+        <ListItemText primary="Map" />
+      </ListItemButton>
+    </Link>
+    <Link to={"/real-time-data"}>
+      <ListItemButton>
+        <ListItemIcon>
+          <BarChartIcon />
+        </ListItemIcon>
+        <ListItemText primary="Data" />
+      </ListItemButton>
+    </Link>
     <ListItemButton>
       <ListItemIcon>
         <LayersIcon />
