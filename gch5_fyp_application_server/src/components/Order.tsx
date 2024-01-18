@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,70 +7,29 @@ import TableRow from "@mui/material/TableRow";
 import Title from "./Title";
 import { Link } from "react-router-dom";
 
-// Generate Order Data
-function createData(
-  id: number,
-  date: string,
-  deviceEUI: string,
-  uplinkMsg: string,
-  locationGPS: string
-) {
-  return { id, date, deviceEUI, uplinkMsg, locationGPS };
-}
-
-// const rows = [
-//   createData(
-//     0,
-//     "16 Mar, 2019",
-//     "Elvis Presley",
-//     "Tupelo, MS",
-//     "VISA ⠀•••• 3719",
-//     312.44
-//   ),
-//   createData(
-//     1,
-//     "16 Mar, 2019",
-//     "Paul McCartney",
-//     "London, UK",
-//     "VISA ⠀•••• 2574",
-//     866.99
-//   ),
-//   createData(
-//     2,
-//     "16 Mar, 2019",
-//     "Tom Scholz",
-//     "Boston, MA",
-//     "MC ⠀•••• 1253",
-//     100.81
-//   ),
-//   createData(
-//     3,
-//     "16 Mar, 2019",
-//     "Michael Jackson",
-//     "Gary, IN",
-//     "AMEX ⠀•••• 2000",
-//     654.39
-//   ),
-//   createData(
-//     4,
-//     "15 Mar, 2019",
-//     "Bruce Springsteen",
-//     "Long Branch, NJ",
-//     "VISA ⠀•••• 5919",
-//     212.79
-//   ),
-// ];
-
-function preventDefault(event: React.MouseEvent) {
-  event.preventDefault();
-}
-
 export default function Orders() {
+  const [rows, setRows] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/get-excel-data');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setRows(data);
+    } catch (error) {
+      console.error("There was a problem with the fetch operation:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []); 
+  
   return (
-    <React.Fragment>
-      <Link to={"/real-time-data"}>
-        <Title>Real Time Data</Title>
-      </Link>
+    <>
+      <Title>Real Time Data</Title>
       <Table size="small">
         <TableHead>
           <TableRow>
@@ -80,18 +39,17 @@ export default function Orders() {
             <TableCell>GPS Location</TableCell>
           </TableRow>
         </TableHead>
-        {/* <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{`$${row.amount}`}</TableCell>
+        <TableBody>
+          {rows.map((row, index) => (
+            <TableRow key={index}>
+              <TableCell>{row.Date}</TableCell>
+              <TableCell>{row.DeviceEUI}</TableCell>
+              <TableCell>{row.UplinkMessage}</TableCell>
+              <TableCell>{row.GPSLocation}</TableCell>
             </TableRow>
           ))}
-        </TableBody> */}
+        </TableBody>
       </Table>
-    </React.Fragment>
+    </>
   );
 }

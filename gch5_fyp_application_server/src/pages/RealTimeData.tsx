@@ -1,7 +1,12 @@
-import Wrapper from "../components/Wrapper";
+import React from 'react';
+import Orders from '../components/Order';
 
 const RealTimeData = () => {
-  return <Wrapper />;
+  return (
+    <div>
+      <Orders />
+    </div>
+  );
 };
 
 export default RealTimeData;
