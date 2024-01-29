@@ -6,7 +6,6 @@ MQTT_SERVER = "nam1.cloud.thethings.network"
 MQTT_PORT = 1883  
 MQTT_USERNAME = "lora-fyp-testing-2023-24@ttn"  # Replace with your TTN Application ID
 MQTT_PASSWORD = 
-# Topic to subscribe to (replace with your actual data)
 MQTT_TOPIC = "v3/lora-fyp-testing-2023-24@ttn/devices/+/up"
 
 # Callback when the client receives a CONNACK response from the server
