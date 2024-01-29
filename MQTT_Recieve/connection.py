@@ -2,8 +2,8 @@ import paho.mqtt.client as mqtt
 import json
 
 # TTN MQTT server credentials
-MQTT_SERVER = "nam1.cloud.thethings.network"  # Removed port from here
-MQTT_PORT = 1883  # or 8883 for TLS
+MQTT_SERVER = "nam1.cloud.thethings.network"  
+MQTT_PORT = 1883  
 MQTT_USERNAME = "lora-fyp-testing-2023-24@ttn"  # Replace with your TTN Application ID
 MQTT_PASSWORD = 
 # Topic to subscribe to (replace with your actual data)
