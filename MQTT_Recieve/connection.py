@@ -5,7 +5,7 @@ import json
 MQTT_SERVER = "nam1.cloud.thethings.network"  # Removed port from here
 MQTT_PORT = 1883  # or 8883 for TLS
 MQTT_USERNAME = "lora-fyp-testing-2023-24@ttn"  # Replace with your TTN Application ID
-MQTT_PASSWORD = "NNSXS.G76CW7MEHL57Z63EGZ37B3F5NC5XBVZAAIIJR2I.ZMWJLERLEGLILKMGNDNKSPC32OWKOBXIV2N6CGCZWHX652YSAZKQ"
+MQTT_PASSWORD = 
 # Topic to subscribe to (replace with your actual data)
 MQTT_TOPIC = "v3/lora-fyp-testing-2023-24@ttn/devices/+/up"
 
