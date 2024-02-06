@@ -66,7 +66,11 @@ const Drawer = styled(MuiDrawer, {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
-export default function Wrapper() {
+interface Props {
+  title: string;
+}
+
+export default function Wrapper({ title }: Props) {
   const [open, setOpen] = React.useState(false);
   const toggleDrawer = () => {
     setOpen(!open);
@@ -101,7 +105,7 @@ export default function Wrapper() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Dashboard
+              {title}
             </Typography>
           </Toolbar>
         </AppBar>

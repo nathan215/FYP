@@ -1,11 +1,16 @@
-import React from 'react';
-import Orders from '../components/Order';
+import TTNDataFetcher from "../components/TTN_StorageIntegration";
+import Wrapper from "../components/Wrapper";
 
 const RealTimeData = () => {
   return (
-    <div>
-      <Orders />
-    </div>
+    // <div>
+    //   <Orders />
+    // </div>
+    <>
+      <Wrapper title="Data Storage">
+        <TTNDataFetcher></TTNDataFetcher>
+      </Wrapper>
+    </>
   );
 };
 
