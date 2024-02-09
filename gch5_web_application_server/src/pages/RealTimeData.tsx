@@ -1,11 +1,11 @@
 import Wrapper from "../components/Wrapper";
 
-const MapRoute = () => {
+const Data = () => {
   return (
-    <Wrapper title="Map & Route">
+    <Wrapper title="Real Time Data">
       <></>
     </Wrapper>
   );
 };
 
-export default MapRoute;
+export default Data;

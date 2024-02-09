@@ -12,7 +12,7 @@ import { LinkedCamera } from "@mui/icons-material";
 import { Link } from "react-router-dom";
 
 export const mainListItems = (
-  <React.Fragment>
+  <>
     <Link to={"/"}>
       <ListItemButton>
         <ListItemIcon>
@@ -52,11 +52,11 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Integrations" />
     </ListItemButton>
-  </React.Fragment>
+  </>
 );
 
 export const secondaryListItems = (
-  <React.Fragment>
+  <>
     <ListSubheader component="div" inset>
       Saved reports
     </ListSubheader>
@@ -78,5 +78,5 @@ export const secondaryListItems = (
       </ListItemIcon>
       <ListItemText primary="Year-end sale" />
     </ListItemButton>
-  </React.Fragment>
+  </>
 );
