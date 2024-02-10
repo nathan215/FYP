@@ -1,0 +1,41 @@
+\documentclass{article}
+\usepackage{amsmath, amssymb}
+
+\begin{document}
+
+\section*{Three-Point Trilateration}
+
+Given three points in a plane: 
+\[ P_1(x_1, y_1), \quad P_2(x_2, y_2), \quad \text{and} \quad P_3(x_3, y_3) \]
+and the distances from an unknown point \( P(x, y) \) to each of these three points are \( r_1, r_2, \) and \( r_3 \) respectively, we can set up the following equations based on the Pythagorean theorem:
+
+\begin{align*}
+A) & \quad (x - x_1)^2 + (y - y_1)^2 = r_1^2 \\
+B) & \quad (x - x_2)^2 + (y - y_2)^2 = r_2^2 \\
+C) & \quad (x - x_3)^2 + (y - y_3)^2 = r_3^2
+\end{align*}
+
+Subtracting the first equation from the other two, we get the linear equations:
+
+\begin{align*}
+D) & \quad 2(x_2 - x_1)x + 2(y_2 - y_1)y = r_1^2 - r_2^2 + x_2^2 - x_1^2 + y_2^2 - y_1^2 \\
+E) & \quad 2(x_3 - x_1)x + 2(y_3 - y_1)y = r_1^2 - r_3^2 + x_3^2 - x_1^2 + y_3^2 - y_1^2
+\end{align*}
+
+From \(D\) and \(E\), we solve for \(x\) and \(y\).
+
+\section*{Overconstrained Trilateration}
+
+When given more than three points and their distances to an unknown point, the system is overconstrained. This means it may not be possible to find a point that satisfies all the distance equations exactly. Therefore, we use a least squares method to find the point \( P(x, y) \) that minimizes the total squared error with respect to all given distances.
+
+Given \( n \) points \( P_i(x_i, y_i) \) and their distances \( r_i \) to the unknown point, we formulate the equations:
+
+\[ f_i(x, y) = x^2 + y^2 - 2x_i x - 2y_i y + x_i^2 + y_i^2 - r_i^2 \]
+
+The goal is to find \(x\) and \(y\) that minimize:
+
+\[ S(x, y) = \sum_{i=1}^n f_i(x, y)^2 \]
+
+Using optimization techniques, such as gradient descent, we can minimize \( S(x, y) \) to determine the coordinates of point \( P \).
+
+\end{document}

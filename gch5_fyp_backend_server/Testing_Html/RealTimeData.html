@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SSE Test</title>
+</head>
+<body>
+    <h2>Real-Time Data Stream</h2>
+    <div id="messages"></div>
+
+    <script>
+        const evtSource = new EventSource('http://localhost:3000/real-time-data');
+        evtSource.onmessage = function(event) {
+            const message = document.createElement('div');
+            message.textContent = event.data;
+            document.getElementById('messages').appendChild(message);
+        };
+    </script>
+</body>
+</html>
