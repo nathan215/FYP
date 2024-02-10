@@ -1,5 +1,5 @@
 {
-  "name": "gch5_fyp_application_server",
+  "name": "gch5_web_application_server",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,10 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@mui/icons-material": "^5.15.3",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.15.8",
+    "@mui/material": "^5.15.7",
+    "ol": "^8.2.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "recharts": "^2.10.4"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
