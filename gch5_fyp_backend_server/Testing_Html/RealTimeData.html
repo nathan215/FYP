@@ -1,19 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>SSE Test</title>
+    <meta charset="UTF-8">
+    <title>Real-time Data Display</title>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
-    <h2>Real-Time Data Stream</h2>
-    <div id="messages"></div>
+    <h1>Real-time Data</h1>
+    <div id="data"></div>
 
     <script>
-        const evtSource = new EventSource('http://localhost:3000/real-time-data');
-        evtSource.onmessage = function(event) {
-            const message = document.createElement('div');
-            message.textContent = event.data;
-            document.getElementById('messages').appendChild(message);
-        };
+        const socket = io('http://localhost:3000');
+        socket.on('realtime_data', function(data) {
+            console.log(data);
+            document.getElementById('data').innerText = JSON.stringify(data, null, 2);
+        });
     </script>
 </body>
 </html>

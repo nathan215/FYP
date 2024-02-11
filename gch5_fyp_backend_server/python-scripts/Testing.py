@@ -1,53 +1,37 @@
-import sys
 import random
+from datetime import datetime, timedelta
+import threading
 import time
-from datetime import datetime
-import psycopg2
+from shared_state import drone_data, station_data
 
-# Database connection parameters
-db_params = {
-    'dbname': 'FYP', # Database name
-    'user': 'postgres',  
-    'password': '0000', 
-    'host': 'localhost',
-    'port': '5433' 
-}
-
-# Function to generate random data
-def generate_data(execution_id):
-    current_time = datetime.utcnow()
-    lat = round(random.uniform(-90, 90), 6)  # Generate random latitude
-    lon = round(random.uniform(-180, 180), 6)  # Generate random longitude
-    rssi_signal = random.randint(-100, 0)  # Generate random RSSI signal strength
-    
-    data = (current_time, lat, lon, rssi_signal, execution_id)
-    
-    return data
-
-def main(execution_id):
-    # Connect to PostgreSQL
-    conn = psycopg2.connect(**db_params)
-    cur = conn.cursor()
-    
-    # Ensure your SQL table and columns match the data structure
-    insert_query = """INSERT INTO RealTimeData (time, lat, lon, rssi_signal, execution_id) 
-                      VALUES (%s, %s, %s, %s, %s);"""
-    
+def generate_drone_data():
+    global drone_data
     while True:
-        data = generate_data(execution_id)
-        cur.execute(insert_query, data)
-        conn.commit()  # Commit the transaction
-        print(f"Inserted data: {data}")
-        time.sleep(1)  # Wait for 1 second before generating next data point
+        time_now = datetime.now()
+        new_drone_data = {
+            'time': time_now.isoformat(),
+            'lat': round(random.uniform(22.3370, 22.3360), 6),
+            'lon': round(random.uniform(114.2635,114.2645), 6)
+        }
+        drone_data.append(new_drone_data)
+        time.sleep(1)  # Generate new drone data every second
 
-    # Close the database connection
-    cur.close()
-    conn.close()
+def generate_station_data():
+    global station_data
+    while True:
+        time_now = datetime.now()
+        new_station_data = {
+            'time': time_now.isoformat(),
+            'rssi': random.randint(-100, 0)
+        }
+        station_data.append(new_station_data)
+        time.sleep(2.5)  # Generate new station data every 2.5 seconds
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python Testing.py <executionId>")
-        sys.exit(1)
-    
-    execution_id = sys.argv[1]
-    main(execution_id)
+
+def start_generating_data():
+    drone_thread = threading.Thread(target=generate_drone_data)
+    station_thread = threading.Thread(target=generate_station_data)
+
+    drone_thread.start()
+    station_thread.start()
+
