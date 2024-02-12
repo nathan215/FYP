@@ -1,6 +1,5 @@
 import { Grid } from "@mui/material";
 import Wrapper from "../components/Wrapper";
-import DataTable from "../components/DataTable";
 import CustomCard from "../components/CustomCard";
 import StorageIntegration from "../components/StorageIntegration";
 
