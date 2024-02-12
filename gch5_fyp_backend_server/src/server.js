@@ -23,18 +23,32 @@ io.on('connection', (socket) => {
 });
 
 // Function to start and manage SeperateJob.py
+// Function to start and manage SeperateJob.py
 function startPython() {
     console.log('Starting SeperateJob.py');
     const pythonProcess = spawn('python', ['./python-scripts/SeperateJob.py']);
 
     pythonProcess.stdout.on('data', (data) => {
         const message = data.toString().trim();
+        console.log(message);
         try {
             const jsonData = JSON.parse(message);
-            // Push data to all connected clients
-            io.emit('realtime_data', jsonData);
+            // Depending on the type of data, emit to different events
+            switch (jsonData.type) {
+                case 'real_time_data':
+                    io.emit('realtime_data_update', jsonData.data);
+                    break;
+                case 'predict_location':
+                    io.emit('predict_location_update', jsonData.data);
+                    break;
+                case 'drone_navigation':
+                    io.emit('drone_navigation_update', jsonData.data);
+                    break;
+                default:
+                    console.error('Unrecognized data type from Python script:', jsonData.type);
+            }
         } catch (error) {
-            console.error('Error parsing JSON from Python script:', message);
+            console.error('Error parsing JSON from Python script:', error);
         }
     });
 
@@ -44,10 +58,10 @@ function startPython() {
 
     // Handle Python process exit
     pythonProcess.on('close', (code) => {
-        console.log(`RealTimeDataCombine.py process exited with code ${code}`);
-        // Consider restarting the Python process if it exits unexpectedly
+        console.log(`SeperateJob.py process exited with code ${code}`);
     });
 }
+
 
 // Function to start Testing.py
 function startTesting() {

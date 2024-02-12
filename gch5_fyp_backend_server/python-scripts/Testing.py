@@ -2,10 +2,10 @@ import random
 from datetime import datetime, timedelta
 import threading
 import time
-from shared_state import drone_data, station_data
+from shared_state import drone_data, station_data, initial_location
 import pandas as pd
 import math
-
+from Coordinate_transfer import xy2ll
 
 R = 6371000  # Radius of the Earth in meters
 start_lat = 22.337
@@ -34,7 +34,6 @@ def generate_station_data():
         station_data.append(new_station_data)
         time.sleep(2.5)  # Generate new station data every 2.5 seconds
 
-
 # def start_generating_data():
 #     drone_thread = threading.Thread(target=generate_drone_data)
 #     station_thread = threading.Thread(target=generate_station_data)
@@ -42,22 +41,16 @@ def generate_station_data():
 #     drone_thread.start()
 #     station_thread.start()
 
-def xy2ll(x, y, start_lat=start_lat, start_lon=start_lon):
-    # Convert back to latitude and longitude
-    start_lat_rad = math.radians(start_lat)
-    lat = y / R + start_lat
-    lon = x / (R * math.cos(start_lat_rad)) + start_lon
-    
-    return lat, lon
-
 # Load data
 df = pd.read_csv('./compiled_data.csv')
 # random the index
 df = df.sample(frac=1).reset_index(drop=True)
 # change x, y to lat, lon
 for index, row in df.iterrows():
-    df.at[index, 'lat'], df.at[index, 'lon'] = xy2ll(row['x'], row['y'])
-# Shared index to keep track of current row for drone and station data
+    df.at[index, 'lat'], df.at[index, 'lon'] = xy2ll(row['x'], row['y'],
+                                    start_lat= initial_location[0],
+                                    start_lon= initial_location[1])
+
 current_index = 0
 
 def read_drone_data():
@@ -75,7 +68,6 @@ def read_drone_data():
         current_index += 1
         time.sleep(1)  # Wait for 1 second before the next drone data emission
 
-
 def read_station_data():
     global current_index
     global station_data
@@ -88,6 +80,13 @@ def read_station_data():
         }
         station_data.append(new_station_data)
         time.sleep(2)  # Wait for 2 seconds before checking again
+
+# def output_data_from_drone():
+#     global current_location, initial_location
+
+#     while True:
+        
+        
 
 # Start threads
 def start_generating_data():

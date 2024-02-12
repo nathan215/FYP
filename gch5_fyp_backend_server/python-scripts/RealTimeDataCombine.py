@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 import json
 import sys
 import time
-from shared_state import drone_data, station_data
+from shared_state import drone_data, station_data, combined_data
 
 def interpolate_location(drone_before, drone_after, station_time_str):
     # Convert ISO format strings back to datetime objects
@@ -20,22 +20,22 @@ def interpolate_location(drone_before, drone_after, station_time_str):
     interpolated_lat = drone_before['lat'] + (drone_after['lat'] - drone_before['lat']) * ratio
     interpolated_lon = drone_before['lon'] + (drone_after['lon'] - drone_before['lon']) * ratio
     
-    return interpolated_lat, interpolated_lon
+    return interpolated_lon, interpolated_lat
 
 def process_new_station_data(new_station_point):
     global drone_data, station_data
     for i in range(len(drone_data) - 1):
         if drone_data[i]['time'] <= new_station_point['time'] <= drone_data[i+1]['time']:
-            interpolated_lat, interpolated_lon = interpolate_location(drone_data[i], drone_data[i+1], new_station_point['time'])
+            interpolated_lon, interpolated_lat = interpolate_location(drone_data[i], drone_data[i+1], new_station_point['time'])
             combined_data = {
-                'time': new_station_point['time'],
-                'lat': interpolated_lat,
-                'lon': interpolated_lon,
-                'rssi': new_station_point['rssi']
+                "type": "real_time_data",
+                "data":{
+                    'time': new_station_point['time'],
+                    'lon': interpolated_lon,
+                    'lat': interpolated_lat,                
+                    'rssi': new_station_point['rssi']}
             }
-
             return combined_data
-
 
 def start_combining_data():
     global drone_data, station_data
@@ -50,3 +50,9 @@ def start_combining_data():
             else:
                 time.sleep(0.5)
         time.sleep(0.5)
+
+# def data_return():
+#     global combined_data, current_location
+#     while True:
+#         if current_location:
+            
