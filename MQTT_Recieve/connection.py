@@ -2,14 +2,15 @@ import paho.mqtt.client as mqtt
 import json
 
 # TTN MQTT server credentials
-MQTT_SERVER = "nam1.cloud.thethings.network"  
-MQTT_PORT = 1883  
+MQTT_SERVER = "nam1.cloud.thethings.network"  # Removed port from here
+MQTT_PORT = 1883  # or 8883 for TLS
 MQTT_USERNAME = "lora-fyp-testing-2023-24@ttn"  # Replace with your TTN Application ID
-MQTT_PASSWORD = 
+MQTT_PASSWORD = "NNSXS.V5EPTIAZDKFR2LCYERNNKDWCN6M6FSNTYYNN4QI.EM7CPT7HWOWKX2ZPUP7GBLHRLKHY245DKXJSHETTJK5QQD277HLA"
+# Topic to subscribe to (replace with your actual data)
 MQTT_TOPIC = "v3/lora-fyp-testing-2023-24@ttn/devices/+/up"
 
 # Callback when the client receives a CONNACK response from the server
-def on_connect(client, userdata, flags, rc):
+def on_connect(client, userdata, flags, rc, properties):
     print(f"Connected with result code {rc}")
     # Subscribe to the topic for device uplinks
     client.subscribe(MQTT_TOPIC)
@@ -21,7 +22,7 @@ def on_message(client, userdata, msg):
     print(json.dumps(payload, indent=4))
 
 # Create an MQTT client instance
-client = mqtt.Client()
+client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
 # Set the username and password for the MQTT client
 client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
