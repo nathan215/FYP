@@ -5,10 +5,9 @@ import sys
 import json
 import threading
 import time
-import random
 from datetime import datetime
 from shared_state import current_drone_location, combined_data, initial_location
-from Coordinate_transfer import xy2ll
+from .Coordinate_transfer import xy2ll
 
 df = pd.read_csv('./compiled_data.csv')
 

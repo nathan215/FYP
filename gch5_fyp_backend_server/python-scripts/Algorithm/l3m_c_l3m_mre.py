@@ -1,6 +1,4 @@
 import os
-
-# Set OMP_NUM_THREADS environment variable
 os.environ['OMP_NUM_THREADS'] = '1'
 from itertools import combinations as itertools_combinations
 from scipy.interpolate import griddata

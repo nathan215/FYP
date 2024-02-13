@@ -2,10 +2,13 @@ import random
 from datetime import datetime, timedelta
 import threading
 import time
-from shared_state import drone_data, station_data, initial_location
 import pandas as pd
-import math
-from Coordinate_transfer import xy2ll
+from shared_state import drone_data, station_data, initial_location
+from .Coordinate_transfer import xy2ll
+import os
+# Get the directory of the current script
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 R = 6371000  # Radius of the Earth in meters
 start_lat = 22.337
@@ -42,7 +45,9 @@ def generate_station_data():
 #     station_thread.start()
 
 # Load data
-df = pd.read_csv('./compiled_data.csv')
+# Construct the path to the file relative to the script location
+file_path = os.path.join(dir_path, '..', '..', 'compiled_data.csv')
+df = pd.read_csv(file_path)
 # random the index
 df = df.sample(frac=1).reset_index(drop=True)
 # change x, y to lat, lon
