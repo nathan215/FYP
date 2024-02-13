@@ -38,7 +38,7 @@ const MapRoute = () => {
               <p style={{ margin: "8px" }}>
                 Longitude: {randomCoordinate.longitude}
               </p>
-              <p style={{ margin: "8px" }}>Zoom Level:</p>
+              {/* <p style={{ margin: "8px" }}>Zoom Level: </p> */}
             </Paper>
           </Grid>
         </Grid>
