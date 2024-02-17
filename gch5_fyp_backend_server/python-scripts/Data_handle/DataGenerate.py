@@ -1,3 +1,4 @@
+# This script is used to generate SIMULATION drone and station data for testing purposes
 import random
 from datetime import datetime, timedelta
 import threading
@@ -9,11 +10,11 @@ import os
 # Get the directory of the current script
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-
 R = 6371000  # Radius of the Earth in meters
 start_lat = 22.337
 start_lon = 114.268
 
+# Generate SIMULATION data
 def generate_drone_data():
     global drone_data
     while True:
@@ -26,6 +27,7 @@ def generate_drone_data():
         drone_data.append(new_drone_data)
         time.sleep(1)  # Generate new drone data every second
 
+# Generate SIMULATION data
 def generate_station_data():
     global station_data
     while True:
@@ -58,6 +60,7 @@ for index, row in df.iterrows():
 
 current_index = 0
 
+# Read data from the CSV file
 def read_drone_data():
     global current_index
     global drone_data
@@ -73,6 +76,7 @@ def read_drone_data():
         current_index += 1
         time.sleep(1)  # Wait for 1 second before the next drone data emission
 
+# Read data from the CSV file
 def read_station_data():
     global current_index
     global station_data
@@ -86,14 +90,6 @@ def read_station_data():
         station_data.append(new_station_data)
         time.sleep(2)  # Wait for 2 seconds before checking again
 
-# def output_data_from_drone():
-#     global current_location, initial_location
-
-#     while True:
-        
-        
-
-# Start threads
 def start_generating_data():
     drone_thread = threading.Thread(target=read_drone_data)
     station_thread = threading.Thread(target=read_station_data)

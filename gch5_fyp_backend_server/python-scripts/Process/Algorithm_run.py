@@ -1,3 +1,4 @@
+# This file is used to run the algorithm and send the next location of droneto frontend
 import time
 import numpy as np 
 import json
@@ -7,6 +8,7 @@ from Algorithm.my_nelder_mead import my_nelder_mead
 from shared_state import initial_location, combined_data, current_drone_location
 from Data_handle.Coordinate_transfer import xy2ll
 
+# This function is used to receive the rssi value of the drone
 def rssi_receive(x):
     rssi = None
     fly_to_point(x)
@@ -30,6 +32,7 @@ def rssi_receive(x):
                 print("RSSI data not found for the current location. Please check combined_data.")
                 time.sleep(0.5)
 
+# This function is used to run the algorithm
 def run_algorithm():
     global current_drone_location
     print("start")

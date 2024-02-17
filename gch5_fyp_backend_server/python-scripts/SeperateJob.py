@@ -1,4 +1,4 @@
-# Assuming Testing.py and RealTimeDataCombine.py have been refactored into modules
+# This is the main file to call the functions in the other files
 from Data_handle.DataGenerate import start_generating_data
 from Data_handle.RealTimeDataCombine import start_combining_data
 from Data_handle.Simul_get_rssi import background_drone_add_rssi

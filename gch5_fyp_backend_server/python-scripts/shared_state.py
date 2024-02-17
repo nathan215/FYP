@@ -1,3 +1,4 @@
+# THIS FILE IS USED TO STORE SHARED STATE VARIABLES
 drone_data = []
 station_data = []
 combined_data = []

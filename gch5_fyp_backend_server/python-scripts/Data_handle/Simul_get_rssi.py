@@ -1,3 +1,4 @@
+# this file is used to simulate the rssi value of the drone,and then send the rssi value 
 from scipy.interpolate import griddata
 import numpy as np
 import pandas as pd
@@ -65,6 +66,7 @@ def rt_drone_simul_rssi_combine():
 
         time.sleep(1)  # Simulate data generation every second
 
+# Start the background thread for simulating drone data and combining it with station data
 def background_drone_add_rssi():
     thread = threading.Thread(target=rt_drone_simul_rssi_combine)
     thread.start()

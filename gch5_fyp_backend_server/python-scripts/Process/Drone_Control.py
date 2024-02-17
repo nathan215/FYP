@@ -1,9 +1,12 @@
+# This file contains the function to Simulate the drone movement and the rssi value of the drone
 from shared_state import current_drone_location
 import time
 
+# This function is used to calculate the distance between two points
 def distance(point1, point2):
     return ((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2) ** 0.5
 
+# This function is used to simulate the drone movement
 def fly_to_point(point):
     speed = 5  # Speed in m/s
     update_interval = 0.3  # Update interval in seconds

@@ -1,9 +1,11 @@
+# This script is used to combine the real-time data from the drone and the station.
 from datetime import datetime, timedelta
 import json
 import sys
 import time
 from shared_state import drone_data, station_data, combined_data
 
+# Interpolate the location of the drone at the time of the station data
 def interpolate_location(drone_before, drone_after, station_time_str):
     # Convert ISO format strings back to datetime objects
     drone_before_time = datetime.fromisoformat(drone_before['time'])
@@ -22,7 +24,8 @@ def interpolate_location(drone_before, drone_after, station_time_str):
     
     return interpolated_lon, interpolated_lat
 
-def process_new_station_data(new_station_point):
+# This function is used to process COMBINED data
+def process_combined_data(new_station_point):
     global drone_data, station_data
     for i in range(len(drone_data) - 1):
         if drone_data[i]['time'] <= new_station_point['time'] <= drone_data[i+1]['time']:
@@ -37,11 +40,12 @@ def process_new_station_data(new_station_point):
             }
             return combined_data
 
+# this function is used to start combining data
 def start_combining_data():
     global drone_data, station_data
     while True:
         if station_data:
-            combined_data = process_new_station_data(station_data[0])
+            combined_data = process_combined_data(station_data[0])
             if combined_data:
                 json_data = json.dumps(combined_data)
                 print(json_data)
@@ -50,9 +54,3 @@ def start_combining_data():
             else:
                 time.sleep(0.5)
         time.sleep(0.5)
-
-# def data_return():
-#     global combined_data, current_location
-#     while True:
-#         if current_location:
-            

@@ -1,3 +1,4 @@
+# This file is used to Calling the algorithm to predict the next location of the drone
 import pandas as pd
 import threading
 import time
@@ -7,6 +8,7 @@ from shared_state import combined_data, initial_location
 from Algorithm.l3m_c_l3m_mre import l3m
 from Data_handle.Coordinate_transfer import xy2ll
 
+# This function is used to calculate the predict location of the drone
 def caculate_predict():
     while True:
         time.sleep(5)
@@ -18,7 +20,7 @@ def caculate_predict():
         print(predict_json)
         sys.stdout.flush()
      
-
+# This function is used to start the predict location in a new thread
 def predict_point():
     thread = threading.Thread(target=caculate_predict)
     thread.start()
