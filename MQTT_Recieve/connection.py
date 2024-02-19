@@ -1,42 +1,34 @@
 import paho.mqtt.client as mqtt
 import json
+import threading
 
-# TTN MQTT server credentials
-MQTT_SERVER = "nam1.cloud.thethings.network"  # Removed port from here
-MQTT_PORT = 1883  # or 8883 for TLS
-MQTT_USERNAME = "lora-fyp-testing-2023-24@ttn"  # Replace with your TTN Application ID
-MQTT_PASSWORD = "NNSXS.V5EPTIAZDKFR2LCYERNNKDWCN6M6FSNTYYNN4QI.EM7CPT7HWOWKX2ZPUP7GBLHRLKHY245DKXJSHETTJK5QQD277HLA"
-# Topic to subscribe to (replace with your actual data)
-MQTT_TOPIC = "v3/lora-fyp-testing-2023-24@ttn/devices/+/up"
+# Shared data structure for storing messages
+messages = []
 
-# Callback when the client receives a CONNACK response from the server
-def on_connect(client, userdata, flags, rc, properties):
-    print(f"Connected with result code {rc}")
-    # Subscribe to the topic for device uplinks
-    client.subscribe(MQTT_TOPIC)
+def setup_mqtt():
+    client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
+    client.on_message = on_message
+    client.username_pw_set("lora-fyp-testing-2023-24@ttn", "NNSXS.V5EPTIAZDKFR2LCYERNNKDWCN6M6FSNTYYNN4QI.EM7CPT7HWOWKX2ZPUP7GBLHRLKHY245DKXJSHETTJK5QQD277HLA")
+    client.connect("nam1.cloud.thethings.network", 1883, 60)
+    client.subscribe("v3/lora-fyp-testing-2023-24@ttn/devices/+/up")
+    client.loop_start()
 
 # Callback when a PUBLISH message is received from the server
 def on_message(client, userdata, msg):
-    print(f"Message received on topic {msg.topic}:")
     payload = json.loads(msg.payload.decode())
-    print(json.dumps(payload, indent=4))
+    message = {
+        "device_id": payload["end_device_ids"]["device_id"],
+        "gateway_id": payload["uplink_message"]["rx_metadata"][0]["gateway_ids"]["gateway_id"],
+        "rssi": payload["uplink_message"]["rx_metadata"][0]["rssi"],
+        "received_at": payload["uplink_message"]["rx_metadata"][0]["received_at"]
+    }
+    messages.append(message)
+    print(message)
+    # Emit the new message to all connected clients
 
-# Create an MQTT client instance
-client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
 
-# Set the username and password for the MQTT client
-client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
+if __name__ == '__main__':
+    setup_mqtt()
+    while True:
+        pass
 
-# Assign the callback functions
-client.on_connect = on_connect
-client.on_message = on_message
-
-# Set TLS if using port 8883 (for TLS connections only)
-if MQTT_PORT == 8883:
-    client.tls_set()  # Default context, no certificates
-
-# Connect to the MQTT server
-client.connect(MQTT_SERVER, MQTT_PORT, 60)
-
-# Start the network loop
-client.loop_forever()
