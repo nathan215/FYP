@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login page</title>
+    <style>
+      .button-row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      button {
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DJI Cloud API test</h1>
+
+    <div class="button-row">
+      <button id="login-button">Login</button>
+      <button id="logout-button">Logout</button>
+      <button id="raport-button">Raport</button>
+    </div>
+    <ul id="logs"></ul>
+    <script>
+      // Developer Information
+      const APP_ID = 143053;
+      const LICENSE =
+        "o2GdwDw1aTR0pF40J4I9KrB7fMLfnN+fYiXuJTMXbYXmQ0UYhgZebO+W9TVtNw+v61UJuYzkEx+tOuxdNOVxlRgffbUEVvzPVppa1Abt6zCuHB8Aeu6t8RxIYG2PpCRKShEx+mgyYjD2oOnFEQn2iLhDelCqinsCkywKDcbfp/o=";
+      const APP_KEY = "eaca82d6debce66c22fe6eae8c66a03";
+
+      var fieldList = document.getElementById("logs");
+      var log = function (msg) {
+        var li = document.createElement("li");
+        li.innerText = msg;
+        fieldList.appendChild(li);
+      };
+
+      var reg_calback = function () {
+        log("Callback called🎉, arguments:" + Array.from(arguments));
+      };
+
+      // Log-in button
+      var loginButton = document.getElementById("login-button");
+      loginButton.addEventListener("click", function () {
+        log("login");
+        var token = window.djiBridge.platformVerifyLicense(
+          APP_ID,
+          APP_KEY,
+          LICENSE
+        );
+        log("platform is verified: " + window.djiBridge.platformIsVerified());
+
+        // Cloud Module Loaded && Thing Connection
+        var register_params = JSON.stringify({
+          host: "tcp://10.89.40.97:1883", // mqtt address, example: tcp://xx.xx.xx.xx:xxx
+          connectCallback: "reg_calback", // js interface for connection status callbacks
+          username: "admin",
+          password: "public12345678",
+        });
+        log(
+          "Load Component: thing " +
+            window.djiBridge.platformLoadComponent("thing", register_params) +
+            "\n Stateℹ️: " +
+            window.djiBridge.thingGetConnectState()
+        );
+        log(
+          "Start the connection thingconn: " +
+            window.djiBridge.thingConnect(
+              "admin",
+              "public12345678",
+              "reg_calback"
+            )
+        );
+        log("Thing Connect state: " + window.djiBridge.thingGetConnectState());
+
+        // API Module
+        var api_params = JSON.stringify({
+          host: "http://10.89.40.97:5173", // {URI-scheme}://{Endpoint}
+          token: "X-Auth-Token", // The header will carry the X-Auth-Token.
+        });
+        log(
+          "Load Component: api " +
+            window.djiBridge.platformLoadComponent("api", api_params) +
+            "\n Token: " +
+            window.djiBridge.apiGetToken() +
+            "\n Host: " +
+            window.djiBridge.apiGetHost()
+        );
+
+        // WS Module
+        // var ws_params = JSON.stringify({
+        //   host: "wss://10.89.40.97:5050", // wss://xxx.xxxx.xxx:8883
+        //   token: "X-Auth-Token", //Tokens will be encoded and spliced into x-Auth-token.
+        //   connectCallback: "js_callback",
+        // });
+        // log(
+        //   "Load Component: ws " +
+        //     window.djiBridge.platformLoadComponent("ws", ws_params)
+        // +
+        // "\n Connection status: " +
+        // window.djiBridge.wsGetConnectState() +
+        // "\n Connect websocket: " +
+        // window.djiBridge.wsConnect(
+        //   ws_params.host,
+        //   ws_params.token,
+        //   ws_params.callback
+        // ) +
+        // "\n Connection status: " +
+        // window.djiBridge.wsGetConnectState()
+        // +
+        // "\nSending Message: " +
+        // window.djiBridge.wsSend("CONNECT TO RC!!!")
+        // );
+
+        // // MAP Module
+        // var map_params = JSON.stringify({
+        //   userName: "", // The name of the creator when the map element is created.
+        //   elementPreName: "", // Prefix of map element name.
+        // });
+        // log(
+        //   "Load Component: map " +
+        //     window.djiBridge.platformLoadComponent("map", map_params)
+        // );
+      });
+
+      // Log-out button
+      var logoutButton = document.getElementById("logout-button");
+      logoutButton.addEventListener("click", function () {
+        log(
+          "unregistering: " + window.djiBridge.platformUnloadComponent("thing")
+        );
+      });
+
+      document
+        .getElementById("raport-button")
+        .addEventListener("click", function () {
+          log(
+            "Statusy platformIsComponentLoaded: " +
+              window.djiBridge.platformIsComponentLoaded("thing") +
+              "\nthing state" +
+              window.djiBridge.thingGetConnectState() +
+              "\n api module" +
+              window.djiBridge.platformIsComponentLoaded("api") +
+              "\n ws module" +
+              window.djiBridge.platformIsComponentLoaded("ws") +
+              "\n map module" +
+              window.djiBridge.platformIsComponentLoaded("map")
+          );
+        });
+    </script>
+  </body>
+</html>

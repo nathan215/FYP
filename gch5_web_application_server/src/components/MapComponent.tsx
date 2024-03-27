@@ -5,7 +5,6 @@ import View from "ol/View";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
 import { fromLonLat } from "ol/proj";
-import VectorLayer from "ol/layer/Vector";
 
 interface Props {
   mapWidth: string;
