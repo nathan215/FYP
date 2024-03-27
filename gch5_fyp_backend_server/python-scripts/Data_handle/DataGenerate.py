@@ -90,6 +90,7 @@ def read_station_data():
         station_data.append(new_station_data)
         time.sleep(2)  # Wait for 2 seconds before checking again
 
+# Generate SIMULATION data
 def start_generating_data():
     drone_thread = threading.Thread(target=read_drone_data)
     station_thread = threading.Thread(target=read_station_data)
