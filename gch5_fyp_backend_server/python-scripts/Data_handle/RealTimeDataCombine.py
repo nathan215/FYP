@@ -37,8 +37,8 @@ def process_combined_data(new_station_point):
         if drone_data[i]['time'] <= new_station_point['time'] <= drone_data[i+1]['time']:
             inter_lon, inter_lat, inter_height = interpolate_location(drone_data[i], drone_data[i+1], new_station_point['time'])
             combined_data = {
-                "type": "real_time_data",
-                "data":{
+                'type': "real_time_data",
+                'data':{
                     'device_id': new_station_point['device_id'],
                     'time': new_station_point['time'],
                     'rssi': new_station_point['rssi'],
@@ -47,9 +47,6 @@ def process_combined_data(new_station_point):
                     'height': inter_height                
                     }
             }
-            # remove the past drone data
-            drone_data = drone_data[i:]
-            print(combined_data)
             save_message_to_json(combined_data)
             return combined_data
     
@@ -68,5 +65,5 @@ def start_combining_data():
             else:
                 time.sleep(0.5)
         else:
-            print("No station data received yet. Please wait for a moment.")
+            # print("No station data received yet. Please wait for a moment.")
             time.sleep(0.5)
