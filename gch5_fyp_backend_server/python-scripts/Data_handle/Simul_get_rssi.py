@@ -7,10 +7,13 @@ import json
 import threading
 import time
 from datetime import datetime
-from shared_state import current_drone_location, combined_data, initial_location
+from shared_state import current_drone_location, combined_data, initial_location, device_id
 from .Coordinate_transfer import xy2ll
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
-df = pd.read_csv('./compiled_data.csv')
+file_path = os.path.join(dir_path, '..', '..', 'compiled_data.csv')
+df = pd.read_csv(file_path)
 
 # Interpolate RSSI values for given x, y (this is a placeholder for your actual interpolation logic)
 def interpolate_rssi(x, y, df):
@@ -31,8 +34,9 @@ def interpolate_rssi(x, y, df):
 
 # Continuous drone simulation and data combination
 def rt_drone_simul_rssi_combine():
-    global current_drone_location, combined_data
-
+    global current_drone_location, combined_data, device_id
+    device_id.append('testing_1')
+    
     while True:
         # Read the current drone location
         x, y = current_drone_location
@@ -52,6 +56,7 @@ def rt_drone_simul_rssi_combine():
         combined_entry = {
             'type': 'real_time_data',
             'data': {
+                'device_id': 'testing_1',
                 'time': time_now.isoformat(),
                 'lon' : lon,
                 'lat' : lat,
@@ -61,9 +66,6 @@ def rt_drone_simul_rssi_combine():
 
         # Emit combined_entry as JSON to frontend
         json_data = json.dumps(combined_entry)
-        print(json_data)
-        sys.stdout.flush()
-
         time.sleep(1)  # Simulate data generation every second
 
 # Start the background thread for simulating drone data and combining it with station data
