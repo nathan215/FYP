@@ -6,27 +6,32 @@ from threading import Thread
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-@app.route('/')
+
+@app.route("/")
 def index():
-    return 'Server is running'
+    return "Server is running"
 
-@app.route('/status', methods=['GET'])
+
+@app.route("/status", methods=["GET"])
 def status():
-    return jsonify({'status': 'Server is running and processing data'})
+    return jsonify({"status": "Server is running and processing data"})
 
-@socketio.on('connect')
+
+@socketio.on("connect")
 def handle_connect():
-    print('A client connected')
+    print("A client connected")
 
-@socketio.on('disconnect')
+
+@socketio.on("disconnect")
 def handle_disconnect():
-    print('Client disconnected')
+    print("Client disconnected")
+
 
 def start_python():
-    print('Attempting to start SeperateJob.py')
-    subprocess.Popen(['python', './python-scripts/SeperateJob.py'])
+    print("Attempting to start SeperateJob.py")
+    subprocess.Popen(["python", "./python-scripts/SeperateJob.py"])
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=3000)
+
+if __name__ == "__main__":
+    socketio.run(app, host="localhost", port=3000)
     start_python()
-    

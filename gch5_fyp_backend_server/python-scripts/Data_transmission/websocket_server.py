@@ -2,15 +2,16 @@
 import json
 from websocket_server import WebsocketServer
 
+
 class WebSocketServer:
-    def __init__(self, port=9001, host='127.0.0.1'):
+    def __init__(self, port=9001, host="127.0.0.1"):
         self.port = port
         self.host = host
         self.server = WebsocketServer(port=self.port, host=self.host)
         self.server.set_fn_new_client(self.new_client)
         self.server.set_fn_message_received(self.message_received)
         self.server.set_fn_client_left(self.client_left)
-    
+
     def new_client(self, client, server):
         print(f"New client connected and was given id {client['id']}")
 
@@ -21,7 +22,7 @@ class WebSocketServer:
         print(f"Message from Client({client['id']}): {message}")
         # Here you can handle incoming messages or commands from clients if needed
 
-    def send_data(self, data):
+    def send_message(self, data):
         """Broadcasts data to all connected clients."""
         self.server.send_message_to_all(json.dumps(data))
 
@@ -29,4 +30,3 @@ class WebSocketServer:
         """Starts the WebSocket server."""
         print(f"Starting WebSocket server on ws://{self.host}:{self.port}")
         self.server.run_forever()
-
