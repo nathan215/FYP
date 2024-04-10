@@ -22,7 +22,8 @@ def generate_drone_data():
         new_drone_data = {
             'time': time_now.isoformat(),
             'lat': round(random.uniform(22.3370, 22.3360), 6),
-            'lon': round(random.uniform(114.2635,114.2645), 6)
+            'lon': round(random.uniform(114.2635,114.2645), 6),
+            'height': random.randint(0, 100),
         }
         drone_data.append(new_drone_data)
         time.sleep(1)  # Generate new drone data every second
@@ -48,6 +49,8 @@ def generate_station_data():
 
 # Load data
 # Construct the path to the file relative to the script location
+
+
 file_path = os.path.join(dir_path, '..', '..', 'compiled_data.csv')
 df = pd.read_csv(file_path)
 # random the index
@@ -70,7 +73,8 @@ def read_drone_data():
         new_drone_data = {
             'time': datetime.now().isoformat(),  # Simulate real-time emission
             'lat': row['lat'],
-            'lon': row['lon']
+            'lon': row['lon'],
+            'height': random.randint(50, 51)
         }
         drone_data.append(new_drone_data)
         current_index += 1
@@ -85,16 +89,17 @@ def read_station_data():
         # Assuming the CSV has an 'rssi' column for station data
         new_station_data = {
             'time': datetime.now().isoformat(),  # Simulate real-time emission
-            'rssi': row['rssi']
+            'rssi': row['rssi'],
+            'device_id': 'test_device_id'
         }
         station_data.append(new_station_data)
         time.sleep(2)  # Wait for 2 seconds before checking again
 
 # Generate SIMULATION data
 def start_generating_data():
+    print("Starting data generation...")
     drone_thread = threading.Thread(target=read_drone_data)
     station_thread = threading.Thread(target=read_station_data)
-
     drone_thread.start()
     station_thread.start()
 

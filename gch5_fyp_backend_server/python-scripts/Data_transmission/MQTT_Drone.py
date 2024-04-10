@@ -87,13 +87,15 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         elif DRONE_SN in msg.topic:
             handle_drone_osd_message(message)
 
+def setup_drone_mqtt():
+    drone_client = mqtt.Client(
+        callback_api_version=mqtt.CallbackAPIVersion.VERSION2, transport="tcp"
+    )
+    drone_client.on_connect = on_connect
+    drone_client.on_message = on_message
+    drone_client.on_subscribe = on_subscribe
+    drone_client.connect("10.89.40.97", 1883, 60)
+    drone_client.loop_forever()
 
-client = mqtt.Client(
-    callback_api_version=mqtt.CallbackAPIVersion.VERSION2, transport="tcp"
-)
-client.on_connect = on_connect
-client.on_message = on_message
-client.on_subscribe = on_subscribe
-
-client.connect("10.89.40.97", 1883, 60)
-client.loop_forever()
+if __name__ == "__main__":
+    setup_drone_mqtt()

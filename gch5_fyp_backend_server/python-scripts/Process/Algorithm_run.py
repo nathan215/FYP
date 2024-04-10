@@ -9,7 +9,7 @@ from shared_state import initial_location, combined_data, current_drone_location
 from Data_handle.Coordinate_transfer import xy2ll
 
 # This function is used to receive the rssi value of the drone
-def rssi_receive(x):
+def rssi_receive(x, websocket_server):
     rssi = None
     fly_to_point(x)
     # turn x to json
@@ -17,7 +17,7 @@ def rssi_receive(x):
     x_re = {'type': 'drone_navigation', 'data': {'lon': lon, 'lat': lat}}
     next_place = json.dumps(x_re)
     print(next_place)
-    sys.stdout.flush()    
+    websocket_server.send_message(next_place)  
     time.sleep(0.5)
     while True:
         if np.linalg.norm(np.array(current_drone_location) - np.array(x)) <= 0.01:
@@ -33,11 +33,11 @@ def rssi_receive(x):
                 time.sleep(0.5)
 
 # This function is used to run the algorithm
-def run_algorithm():
+def run_algorithm(websocket_server):
     global current_drone_location
     print("start")
     current_drone_location_array = np.array(current_drone_location)
-    minimum, points_evaluated = my_nelder_mead(rssi_receive, current_drone_location_array)
+    minimum, points_evaluated = my_nelder_mead(lambda x: rssi_receive(x, websocket_server), current_drone_location_array)
 
 if __name__ == "__main__":
     run_algorithm()

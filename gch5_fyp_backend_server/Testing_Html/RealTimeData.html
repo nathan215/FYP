@@ -2,86 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Real-time Data Display</title>
-    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" crossorigin="anonymous"></script>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
 </head>
 <body>
-    <h1>Real-time Data</h1>
-    <table id="realtimeDataTable">
-        <thead>
-            <tr>
-                <th>Time</th>
-                <th>Longitude</th>
-                <th>Latitude</th>
-                <th>RSSI</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Real-time data entries will go here -->
-        </tbody>
-    </table>
-
-    <h2>Predicted Location</h2>
-    <table id="predictedLocationTable">
-        <thead>
-            <tr>
-                <th>Longitude</th>
-                <th>Latitude</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Predicted location entries will go here -->
-        </tbody>
-    </table>
-
-    <h2>Drone Navigation</h2>
-    <table id="droneNavigationTable">
-        <thead>
-            <tr>
-                <th>Longitude</th>
-                <th>Latitude</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Drone navigation entries will go here -->
-        </tbody>
-    </table>
+    <div id="messages">
+        <!-- Messages will be added here -->
+    </div>
 
     <script>
-        const socket = io('http://localhost:3000');
+        const websocket = new WebSocket("ws://localhost:9001");
 
-        socket.on('realtime_data_update', function(data) {
-            appendRow('realtimeDataTable', data);
-        });
+        websocket.onopen = function(event) {
+            console.log("WebSocket connection opened");
+        };
 
-        socket.on('predict_location_update', function(data) {
-            appendRow('predictedLocationTable', data);
-        });
+        websocket.onmessage = function(event) {
+            const messagesDiv = document.getElementById("messages");
+            // Create a new paragraph for each message
+            const newMessage = document.createElement("p");
+            newMessage.textContent = event.data;
+            messagesDiv.appendChild(newMessage);
+        };
 
-        socket.on('drone_navigation_update', function(data) {
-            appendRow('droneNavigationTable', data);
-        });
-
-        function appendRow(tableId, data) {
-            const table = document.getElementById(tableId);
-            const row = document.createElement('tr');
-            Object.values(data).forEach(text => {
-                const cell = document.createElement('td');
-                cell.textContent = text;
-                row.appendChild(cell);
-            });
-            table.getElementsByTagName('tbody')[0].appendChild(row);
-        }
+        websocket.onclose = function(event) {
+            console.log("WebSocket connection closed");
+        };
     </script>
 </body>
 </html>
+
