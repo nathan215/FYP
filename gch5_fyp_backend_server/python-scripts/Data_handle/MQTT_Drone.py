@@ -4,16 +4,23 @@ import pprint
 import asyncio
 import websockets
 import paho.mqtt.client as mqtt
+import datetime
 
 RC_SN = "4LFCL54005FA25"
 DRONE_SN = "1581F6GKB235F00400CD"
 
 
-async def send_to_websocket(message):
-    uri = "ws://10.89.40.97:5174"
-    async with websockets.connect(uri) as websocket:
-        await websocket.send(message)
-        print(f"Sent to WebSocket: {message}")
+# async def send_to_websocket(message):
+#     uri = "ws://10.89.40.97:5174"
+#     async with websockets.connect(uri) as websocket:
+#         await websocket.send(message)
+#         print(f"Sent to WebSocket: {message}")
+
+
+def save_message_to_json(message, filename):
+    with open(filename, "a") as file:
+        json.dump(message, file)
+        file.write("\n")  # Add newline to separate messages
 
 
 def on_subscribe(client, userdata, mid, reason_code_list, properties):
@@ -36,20 +43,27 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 
 # Print interesting bits from message
-def handle_osd_message(message: dict):
+def handle_rc_osd_message(message: dict):
     data = message["data"]
-    msg = {"latitude": data["latitude"], "longitude": data["longitude"]}
-    asyncio.run(send_to_websocket(json.dumps(msg)))
+    msg = {
+        "timestamp": int(datetime.datetime.now().timestamp()),
+        "latitude": data["latitude"],
+        "longitude": data["longitude"],
+    }
+    # asyncio.run(send_to_websocket(json.dumps(msg)))
+    save_message_to_json(msg, "RemoteController_data.json")
 
 
 def handle_drone_osd_message(message: dict):
     data = message["data"]
     msg = {
+        "timestamp": int(datetime.datetime.now().timestamp()),
         "latitude": data["latitude"],
         "longitude": data["longitude"],
         "height": data["height"],
     }
-    asyncio.run(send_to_websocket(json.dumps(msg)))
+    save_message_to_json(msg, "Drone_data.json")
+    # asyncio.run(send_to_websocket(json.dumps(msg)))
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -69,7 +83,7 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         print("✅published")
     elif msg.topic.endswith("osd") and msg.topic.startswith("thing"):
         if RC_SN in msg.topic:
-            handle_osd_message(message)
+            handle_rc_osd_message(message)
         elif DRONE_SN in msg.topic:
             handle_drone_osd_message(message)
 

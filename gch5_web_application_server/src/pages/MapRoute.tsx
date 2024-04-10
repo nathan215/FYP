@@ -1,48 +1,121 @@
-import { Grid, Paper } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import Wrapper from "../components/Wrapper";
-import MapComponent from "../components/MapComponent";
-import { useEffect, useState } from "react";
 
-// const generateRandomCoordinate = () => {
-//   const latitude = getRandomNumberInRange(22, 25);
-//   const longitude = getRandomNumberInRange(113, 114);
-//   return { latitude, longitude };
-// };
+import React, { useEffect, useRef, useState } from "react";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-// const getRandomNumberInRange = (min: number, max: number) => {
-//   return Math.random() * (max - min) + min;
-// };
-
-const MapRoute = () => {
-  const [latitude, setLatitude] = useState<number>(0);
-  const [longitude, setLongitude] = useState<number>(0);
+const MapComponent: React.FC = () => {
+  const mapRef = useRef<L.Map | null>(null);
+  const polylineRef = useRef<L.Polyline | null>(null);
+  const [coordinates, setCoordinates] = useState({ lat: 0, lon: 0 });
+  const webSocket = new WebSocket("ws://10.89.40.97:3000");
 
   useEffect(() => {
-    const webSocket = new WebSocket("ws://10.89.40.97:5174");
+    // Create the map with initial configuration
+    const map = L.map("map").setView([0, 0], 8);
 
-    webSocket.onopen = () => {
-      console.log("WebSocket connection established");
+    // Add a tile layer to the map (e.g., OpenStreetMap tiles)
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "Map data © OpenStreetMap contributors",
+    }).addTo(map);
+
+    // Create a polyline for drawing the route
+    const polyline = L.polyline([], { color: "blue" }).addTo(map);
+
+    // Store references to the map and polyline
+    mapRef.current = map;
+    polylineRef.current = polyline;
+
+    return () => {
+      // Clean up when the component is unmounted
+      map.remove();
     };
+  }, []);
 
+  useEffect(() => {
     webSocket.onmessage = (event) => {
-      console.log("Receiving message: ");
-      const data = JSON.parse(event.data);
-      setLatitude(data.latitude);
-      setLongitude(data.longitude);
-    };
+      const message = JSON.parse(event.data);
+      console.log(message);
+      if (
+        message.hasOwnProperty("dronelatitude") &&
+        message.hasOwnProperty("dronelongitude")
+      ) {
+        const { drone_latitude, drone_longitude } = message;
+        console.log(message[0]);
+        console.log(drone_latitude);
+        setCoordinates({ lat: drone_latitude, lon: drone_longitude });
+        console.log(
+          "Receive drone's coordinates: " +
+            drone_latitude +
+            "," +
+            drone_longitude
+        );
+        // Get the map and polyline references
+        const map = mapRef.current;
+        const polyline = polylineRef.current;
 
-    webSocket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
+        if (map && polyline) {
+          const newLatLng = L.latLng(drone_latitude, drone_longitude);
+          // Add the new drone point as a red circle marker
+          const droneMarker = L.circleMarker(newLatLng, {
+            radius: 6,
+            color: "red",
+            fillColor: "red",
+            fillOpacity: 1,
+          }).addTo(map);
+          // Pan the map to the new drone point
+          map.panTo(newLatLng);
+        }
+      } else {
+        const { latitude, longitude } = message;
+        setCoordinates({ lat: latitude, lon: longitude });
+        console.log("Receive coordinates: " + latitude + "," + longitude);
 
-    webSocket.onclose = () => {
-      console.log("WebSocket connection closed");
+        // Get the map and polyline references
+        const map = mapRef.current;
+        const polyline = polylineRef.current;
+
+        if (map && polyline) {
+          const newLatLng = L.latLng(latitude, longitude);
+
+          // Add the new point to the polyline
+          polyline.addLatLng(newLatLng);
+
+          // Pan the map to the new point
+          map.panTo(newLatLng);
+        }
+      }
     };
 
     return () => {
-      webSocket.close();
+      // webSocket.close();
+      console.log(".");
     };
   }, []);
+  // useEffect(() => {
+  //   webSocket.onmessage = (event) => {
+  //     const { latitude, longitude } = JSON.parse(event.data);
+  //     setCoordinates({ lat: latitude, lon: longitude });
+  //     console.log("Receive coordinates: " + latitude + "," + longitude);
+
+  //     // Get the map and polyline references
+  //     const map = mapRef.current;
+  //     const polyline = polylineRef.current;
+
+  //     if (map && polyline) {
+  //       const newLatLng = L.latLng(latitude, longitude);
+
+  //       // Add the new point to the polyline
+  //       polyline.addLatLng(newLatLng);
+
+  //       // Pan the map to the new point
+  //       map.panTo(newLatLng);
+  //     }
+  //   };
+
+  //   return () => {};
+  // }, []);
 
   return (
     <Wrapper title="Map & Route">
@@ -50,19 +123,13 @@ const MapRoute = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={8} lg={9}>
             <Paper>
-              <MapComponent
-                mapWidth="100%"
-                mapHeight="85vh"
-                longitude={longitude}
-                latitude={latitude}
-                zooming={13}
-              />
+              <Box id="map" width="100%" height="85vh"></Box>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
             <Paper sx={{ padding: "8px", height: "85vh" }}>
-              <p style={{ margin: "8px" }}>Latitude: {latitude}</p>
-              <p style={{ margin: "8px" }}>Longitude: {longitude}</p>
+              <p style={{ margin: "8px" }}>Latitude: {coordinates.lat}</p>
+              <p style={{ margin: "8px" }}>Longitude: {coordinates.lon}</p>
               {/* <p style={{ margin: "8px" }}>Zoom Level: </p> */}
             </Paper>
           </Grid>
@@ -72,4 +139,4 @@ const MapRoute = () => {
   );
 };
 
-export default MapRoute;
+export default MapComponent;

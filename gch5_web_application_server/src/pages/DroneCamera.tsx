@@ -1,6 +1,5 @@
 import { Box, Paper } from "@mui/material";
 import Wrapper from "../components/Wrapper";
-import { useEffect, useState } from "react";
 
 const DroneCamera = () => {
   return (
