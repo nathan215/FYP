@@ -12,14 +12,16 @@ from .path_draw import draw_path
 
 # This function is used to receive the rssi value of the drone
 def rssi_receive(x, websocket_server):
-    draw_path()
-    rssi = None
-    fly_to_point(x)
-    # turn x to json
+    
     lon, lat = xy2ll(x[0], x[1], initial_location[0], initial_location[1])
     x_re = {"type": "predict_location", "data": {"lon": lon, "lat": lat}}
     print(f"Sending predicted location: {x_re}")
     websocket_server.send_message(x_re)
+    draw_path()
+    rssi = None
+    fly_to_point(x)
+    # turn x to json
+
 
     time.sleep(0.5)
     while True:
