@@ -8,7 +8,7 @@ def distance(point1, point2):
 
 # This function is used to simulate the drone movement
 def fly_to_point(point):
-    speed = 5  # Speed in m/s
+    speed = 10  # Speed in m/s
     update_interval = 0.3  # Update interval in seconds
     while True:
         distance_to_travel = distance(current_drone_location, point)

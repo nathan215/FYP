@@ -17,6 +17,8 @@ from shared_state import (
     combined_data,
     initial_location,
     device_id,
+    algorithm_use,
+    find_device_id,
 )
 import time
 
@@ -67,9 +69,12 @@ def main():
             combine_thread = threading.Thread(target=start_combining_data)
         # Start testing
         elif user_input == "simulation":
-            background_drone_add_rssi()
+            background_drone_add_rssi_thread = threading.Thread(
+                target=background_drone_add_rssi, args=(websocket_server,)
+            )
+            background_drone_add_rssi_thread.start()
             trace_setting()
-            predict_point(websocket_server)
+            # predict_point(websocket_server)
             run_algorithm(websocket_server)
         else:
             print("Invalid input, please try again.")
@@ -77,4 +82,4 @@ def main():
 
 
 if __name__ == "__main__":
-    testing()
+    main()

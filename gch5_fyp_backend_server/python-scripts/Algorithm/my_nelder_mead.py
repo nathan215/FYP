@@ -6,8 +6,8 @@
 import numpy as np
 import copy
 
-def my_nelder_mead(f, x_start, step=25, no_improve_thr=10e-6,
-                no_improv_break=10, max_iter=100,
+def my_nelder_mead(f, x_start, step=50, no_improve_thr=10e-6,
+                no_improv_break=20, max_iter=100,
                 alpha=1., gamma=2., rho=-0.5, sigma=0.5):
     '''
         Implementation of the Nelder-Mead simplex algorithm.

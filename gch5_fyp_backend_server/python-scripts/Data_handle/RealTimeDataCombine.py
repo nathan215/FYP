@@ -51,7 +51,7 @@ def process_combined_data(new_station_point, websocket_server):
             inter_lon, inter_lat, inter_height = interpolate_location(
                 drone_data[i], drone_data[i + 1], new_station_point["time"]
             )
-            combined_data = {
+            combine_data = {
                 "type": "real_time_data",
                 "data": {
                     "device_id": new_station_point["device_id"],
@@ -59,13 +59,14 @@ def process_combined_data(new_station_point, websocket_server):
                     "rssi": new_station_point["rssi"],
                     "lon": inter_lon,
                     "lat": inter_lat,
-                    "height": inter_height,
+                    "height": inter_height
                 },
             }
-            save_message_to_json(combined_data)  # Optionally save to file
-            websocket_server.send_message(combined_data)
-            print("Combined data sent:", combined_data)
-            return combined_data
+            
+            save_message_to_json(combine_data)  # Optionally save to file
+            websocket_server.send_message(combine_data)
+            print("Combined data sent:", combine_data)
+            return combine_data
     return None
 
 

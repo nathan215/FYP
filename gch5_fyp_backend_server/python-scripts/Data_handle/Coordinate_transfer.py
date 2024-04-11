@@ -1,32 +1,33 @@
-# The code uses to transfer between the latitude and longitude coordinates and the x and y coordinates is as follows:
 import math
 
-# Earth's radius 
+# Earth's radius in meters
 R = 6371000
 
-# Input: Latitude and longitude of point, latitude and longitude of starting point
-# Output: x and y coordinates of the point
 def ll2xy(lon, lat, start_lon, start_lat):
-    # Convert latitude and longitude to radians
     lat_rad = math.radians(lat)
     start_lat_rad = math.radians(start_lat)
-    # Calculate differences in coordinates
-    delta_lat = lat - start_lat
-    delta_lon = lon - start_lon
-    # Approximate conversions using average latitude
-    x = math.radians(delta_lon) * math.cos((start_lat_rad + lat_rad) / 2) * R
-    y = math.radians(delta_lat) * R
+    lon_rad = math.radians(lon)
+    start_lon_rad = math.radians(start_lon)
+    
+    # Calculate differences in coordinates in radians
+    delta_lat = lat_rad - start_lat_rad
+    delta_lon = lon_rad - start_lon_rad
+    
+    x = delta_lon * math.cos((start_lat_rad + lat_rad) / 2) * R
+    y = delta_lat * R
     
     return x, y
 
-# Input: x and y coordinates of point, latitude and longitude of starting point
-# Output: Latitude and longitude of the point
 def xy2ll(x, y, start_lon, start_lat):
-    # Convert back to latitude and longitude
     start_lat_rad = math.radians(start_lat)
-    lat = y / R + start_lat
-    lon = x / (R * math.cos(start_lat_rad)) + start_lon
+    delta_lat = y / R
+    delta_lon = x / (R * math.cos(start_lat_rad))
+    
+    lat = math.degrees(delta_lat + start_lat_rad)
+    lon = math.degrees(delta_lon + math.radians(start_lon))
+    
     return lon, lat
+
 
 # NOT USED NOW
 # Input: x and y coordinates of starting point, x and y coordinates of destination point

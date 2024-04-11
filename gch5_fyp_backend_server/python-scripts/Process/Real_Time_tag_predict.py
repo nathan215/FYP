@@ -29,7 +29,7 @@ def caculate_predict(websocket_server):
         predict_json = json.dumps(
             {"type": "predict_location", "data": {"lon": lon, "lat": lat}}
         )
-        websocket_server.send_data(predict_json)  # Send prediction through WebSocket
+        websocket_server.send_message(predict_json)  # Send prediction through WebSocket
 
 
 # This function is used to start the predict location in a new thread
