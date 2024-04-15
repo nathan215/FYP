@@ -1,14 +1,22 @@
-import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardActionArea, Box, Typography, Paper } from "@mui/material";
+import {
+  Card,
+  CardActionArea,
+  Box,
+  Typography,
+  Paper,
+  alpha,
+} from "@mui/material";
+import { ReactNode } from "react";
 
 interface CardProps {
   cardHeight: number;
   title: string;
   linkTo: string;
+  component: ReactNode;
 }
 
-const CustomCard: React.FC<CardProps> = ({ title, linkTo, cardHeight }) => {
+const CustomCard = ({ title, linkTo, cardHeight, component }: CardProps) => {
   return (
     <Paper>
       <Card>
@@ -16,10 +24,13 @@ const CustomCard: React.FC<CardProps> = ({ title, linkTo, cardHeight }) => {
           <Box
             width="100%"
             height={cardHeight}
-            bgcolor="grey.300"
             position="relative"
+            sx={{
+              backgroundColor: alpha("#808080", 0.5),
+            }}
           >
-            {/* Add your content or image here */}
+            {component}
+
             <Typography
               variant="h5"
               sx={{

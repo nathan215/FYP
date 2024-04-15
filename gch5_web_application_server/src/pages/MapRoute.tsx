@@ -1,11 +1,11 @@
 import { Box, Grid, Paper } from "@mui/material";
 import Wrapper from "../components/Wrapper";
 
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
-const MapComponent = () => {
+const MapRoute = () => {
   const mapRef = useRef<L.Map | null>(null);
   const droneMarkerRef = useRef<L.CircleMarker | null>(null);
   const polylineRef = useRef<L.Polyline | null>(null);
@@ -156,4 +156,4 @@ const MapComponent = () => {
   );
 };
 
-export default MapComponent;
+export default MapRoute;

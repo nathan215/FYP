@@ -14,7 +14,7 @@ import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { useState } from "react";
-import { mainListItems, secondaryListItems } from "./ListItem";
+import { mainListItems } from "./ListItem";
 
 interface Props {
   title: string;
@@ -131,7 +131,6 @@ const Wrapper = ({ title, children }: Props) => {
           <List component="nav">
             {mainListItems}
             <Divider sx={{ my: 1 }} />
-            {secondaryListItems}
           </List>
         </Drawer>
         <Box

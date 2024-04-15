@@ -2,6 +2,7 @@ import { Grid } from "@mui/material";
 import Wrapper from "../components/Wrapper";
 import CustomCard from "../components/CustomCard";
 import StorageIntegration from "../components/StorageIntegration";
+import MapCard from "../components/MapCard";
 
 const Dashboard = () => {
   return (
@@ -13,6 +14,7 @@ const Dashboard = () => {
               title="Map & Route"
               linkTo="/map-route"
               cardHeight={350}
+              component={<MapCard />}
             />
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
@@ -20,6 +22,7 @@ const Dashboard = () => {
               title="Drone & Camera"
               linkTo="/camera-view"
               cardHeight={350}
+              component={<></>}
             />
           </Grid>
           <Grid item xs={12}>
