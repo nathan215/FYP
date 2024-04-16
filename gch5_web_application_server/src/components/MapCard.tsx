@@ -1,13 +1,19 @@
 import { Box, Paper, alpha } from "@mui/material";
 
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { WebSocketContext } from "./WebSocketContext";
 
 const MapCard = () => {
   const mapRef = useRef<L.Map | null>(null);
-  const droneMarkerRef = useRef<L.CircleMarker | null>(null);
   const polylineRef = useRef<L.Polyline | null>(null);
+  const markersRef = useRef<L.CircleMarker[]>([]);
+  const websocketContext = useContext(WebSocketContext); // Access the WebSocket context
+  const [coordinates, setCoordinates] = useState({ lat: 0, lon: 0 });
+  const [predictedLocation, setPredictedLocation] = useState<
+    Array<{ lat: number; lon: number }>
+  >([]);
 
   useEffect(() => {
     // Create the map with initial configuration
@@ -32,76 +38,62 @@ const MapCard = () => {
   }, []);
 
   useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:9001");
-    webSocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
+    // Access the necessary data from the WebSocket context
+    const { realTimeData, predictedLocation } = websocketContext;
 
-      if (message.type === "real_time_data") {
-        const drone_latitude = message.data["lat"];
-        const drone_longitude = message.data["lon"];
-        console.log(
-          "Receive drone's coordinates: " +
-            drone_latitude +
-            "," +
-            drone_longitude
-        );
-        // Get the map and polyline references
-        const map = mapRef.current;
-        const polyline = polylineRef.current;
+    if (realTimeData) {
+      setCoordinates({
+        lat: realTimeData[realTimeData.length - 1].lat,
+        lon: realTimeData[realTimeData.length - 1].lon,
+      });
 
-        if (map && polyline) {
-          const newLatLng = L.latLng(drone_latitude, drone_longitude);
+      // Get the map and polyline references
+      const map = mapRef.current;
+      const polyline = polylineRef.current;
+      const markers = markersRef.current;
 
-          if (droneMarkerRef.current) {
-            droneMarkerRef.current.removeFrom(map);
-          }
-
-          // Add the new drone point as a red circle marker
-          const droneMarker = L.circleMarker(newLatLng, {
-            radius: 2,
-            color: "red",
-            fillColor: "red",
-            fillOpacity: 1,
-          }).addTo(map);
-          droneMarkerRef.current = droneMarker;
-
-          // Pan the map to the new drone point
-          map.panTo(newLatLng);
-        }
-      } else {
-        console.log(message.data);
-        const destination_latitude = message.data["lat"];
-        const destination_longitude = message.data["lon"];
-        console.log(
-          "Receive coordinates: " +
-            destination_latitude +
-            "," +
-            destination_longitude
+      if (map && polyline) {
+        const newLatLng = L.latLng(
+          realTimeData[realTimeData.length - 1].lat,
+          realTimeData[realTimeData.length - 1].lon
         );
 
-        // Get the map and polyline references
-        const map = mapRef.current;
-        const polyline = polylineRef.current;
+        // Clear previous polyline
+        polyline.setLatLngs([]);
 
-        if (map && polyline) {
-          const newLatLng = L.latLng(
-            destination_latitude,
-            destination_longitude
+        // Add the new drone point as a red circle marker
+        const droneMarker = L.circleMarker(newLatLng, {
+          radius: 2,
+          color: "red",
+          fillColor: "red",
+          fillOpacity: 1,
+        }).addTo(map);
+        markers.push(droneMarker);
+        markers
+          .slice(0, markers.length - 1)
+          .forEach((marker: any) =>
+            marker.setStyle({ color: "gray", fillColor: "gray" })
           );
-
+        if (predictedLocation) {
+          setPredictedLocation(predictedLocation);
           // Add the new point to the polyline
-          polyline.addLatLng(newLatLng);
-
-          // Pan the map to the new point
-          map.panTo(newLatLng);
+          // Add the predicted locations as part of the polyline
+          const predictedLatLngs = predictedLocation.map((location) =>
+            L.latLng(location.lat, location.lon)
+          );
+          polyline.setLatLngs(predictedLatLngs);
         }
-      }
-    };
 
-    return () => {
-      webSocket.close();
-    };
-  }, []);
+        // Add the new point to the polyline
+        polyline.addLatLng(newLatLng);
+
+        // Pan the map to the new point
+        map.panTo(newLatLng);
+      }
+
+      // Update the component state with the received data
+    }
+  }, [websocketContext]);
 
   return <Box id="map" height="100%"></Box>;
 };

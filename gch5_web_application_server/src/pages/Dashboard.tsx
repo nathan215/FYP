@@ -1,8 +1,8 @@
 import { Grid } from "@mui/material";
 import Wrapper from "../components/Wrapper";
 import CustomCard from "../components/CustomCard";
-import StorageIntegration from "../components/StorageIntegration";
 import MapCard from "../components/MapCard";
+import BackendData from "../components/BackendData";
 
 const Dashboard = () => {
   return (
@@ -26,7 +26,7 @@ const Dashboard = () => {
             />
           </Grid>
           <Grid item xs={12}>
-            <StorageIntegration />
+            <BackendData />
           </Grid>
         </Grid>
       </>

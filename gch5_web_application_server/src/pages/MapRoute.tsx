@@ -1,18 +1,21 @@
 import { Box, Grid, Paper } from "@mui/material";
 import Wrapper from "../components/Wrapper";
-
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { WebSocketContext } from "../components/WebSocketContext";
 
 const MapRoute = () => {
   const mapRef = useRef<L.Map | null>(null);
-  const droneMarkerRef = useRef<L.CircleMarker | null>(null);
   const polylineRef = useRef<L.Polyline | null>(null);
+  const markersRef = useRef<L.CircleMarker[]>([]);
+  const websocketContext = useContext(WebSocketContext); // Access the WebSocket context
   const [coordinates, setCoordinates] = useState({ lat: 0, lon: 0 });
   const [height, setHeight] = useState(0);
   const [rssi, setRSSI] = useState(0);
-  const [destination, setDestination] = useState({ des_lat: 0, des_lon: 0 });
+  const [predictedLocation, setPredictedLocation] = useState<
+    Array<{ lat: number; lon: number }>
+  >([]);
 
   useEffect(() => {
     // Create the map with initial configuration
@@ -37,121 +40,92 @@ const MapRoute = () => {
   }, []);
 
   useEffect(() => {
-    const webSocket = new WebSocket("ws://localhost:9001");
-    webSocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
+    // Access the necessary data from the WebSocket context
+    const { realTimeData, predictedLocation } = websocketContext;
 
-      if (message.type === "real_time_data") {
-        const drone_latitude = message.data["lat"];
-        const drone_longitude = message.data["lon"];
-        const RSSI = message.data["rssi"];
-        const drone_altitude = message.data["height"];
+    if (realTimeData) {
+      setCoordinates({
+        lat: realTimeData[realTimeData.length - 1].lat,
+        lon: realTimeData[realTimeData.length - 1].lon,
+      });
+      setHeight(realTimeData[realTimeData.length - 1].height);
+      setRSSI(realTimeData[realTimeData.length - 1].rssi);
 
-        setCoordinates({ lat: drone_latitude, lon: drone_longitude });
-        setRSSI(RSSI);
-        setHeight(drone_altitude);
+      // Get the map and polyline references
+      const map = mapRef.current;
+      const polyline = polylineRef.current;
+      const markers = markersRef.current;
 
-        console.log(
-          "Receive drone's coordinates: " +
-            drone_latitude +
-            "," +
-            drone_longitude +
-            " RSSI: " +
-            RSSI
-        );
-        // Get the map and polyline references
-        const map = mapRef.current;
-        const polyline = polylineRef.current;
-
-        if (map && polyline) {
-          const newLatLng = L.latLng(drone_latitude, drone_longitude);
-
-          if (droneMarkerRef.current) {
-            droneMarkerRef.current.removeFrom(map);
-          }
-
-          // Add the new drone point as a red circle marker
-          const droneMarker = L.circleMarker(newLatLng, {
-            radius: 2,
-            color: "red",
-            fillColor: "red",
-            fillOpacity: 1,
-          }).addTo(map);
-          droneMarkerRef.current = droneMarker;
-
-          // Pan the map to the new drone point
-          map.panTo(newLatLng);
-        }
-      } else {
-        console.log(message.data);
-        const destination_latitude = message.data["lat"];
-        const destination_longitude = message.data["lon"];
-        setDestination({
-          des_lat: destination_latitude,
-          des_lon: destination_longitude,
-        });
-        console.log(
-          "Receive coordinates: " +
-            destination_latitude +
-            "," +
-            destination_longitude
+      if (map && polyline) {
+        const newLatLng = L.latLng(
+          realTimeData[realTimeData.length - 1].lat,
+          realTimeData[realTimeData.length - 1].lon
         );
 
-        // Get the map and polyline references
-        const map = mapRef.current;
-        const polyline = polylineRef.current;
+        // Clear previous polyline
+        polyline.setLatLngs([]);
 
-        if (map && polyline) {
-          const newLatLng = L.latLng(
-            destination_latitude,
-            destination_longitude
+        // Add the new drone point as a red circle marker
+        const droneMarker = L.circleMarker(newLatLng, {
+          radius: 2,
+          color: "red",
+          fillColor: "red",
+          fillOpacity: 1,
+        }).addTo(map);
+        markers.push(droneMarker);
+        markers
+          .slice(0, markers.length - 1)
+          .forEach((marker: any) =>
+            marker.setStyle({ color: "gray", fillColor: "gray" })
           );
-
+        if (predictedLocation) {
+          setPredictedLocation(predictedLocation);
           // Add the new point to the polyline
-          polyline.addLatLng(newLatLng);
-
-          // Pan the map to the new point
-          map.panTo(newLatLng);
+          // Add the predicted locations as part of the polyline
+          const predictedLatLngs = predictedLocation.map((location) =>
+            L.latLng(location.lat, location.lon)
+          );
+          polyline.setLatLngs(predictedLatLngs);
         }
-      }
-    };
 
-    return () => {
-      webSocket.close();
-    };
-  }, []);
+        // Add the new point to the polyline
+        polyline.addLatLng(newLatLng);
+
+        // Pan the map to the new point
+        map.panTo(newLatLng);
+      }
+
+      // Update the component state with the received data
+    }
+  }, [websocketContext]);
 
   return (
     <Wrapper title="Map & Route">
-      <>
-        <Grid container spacing={2}>
-          <Grid item xs={12} md={8} lg={9}>
-            <Paper>
-              <Box id="map" width="100%" height="85vh"></Box>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} md={4} lg={3}>
-            <Paper sx={{ padding: "8px", height: "85vh" }}>
-              <p style={{ margin: "8px" }}>
-                <b>Drone's Location: </b>({coordinates.lat}, {coordinates.lon})
-              </p>
-              <p style={{ margin: "8px" }}>
-                <b>Current altitude: </b>
-                {height}
-              </p>
-              <p style={{ margin: "8px" }}>
-                <b>Received Signal Strength Indicator (RSSI): </b>
-                {rssi}
-              </p>
-              <p style={{ margin: "8px" }}>
-                {" "}
-                <b>Next Destination: </b>({destination.des_lat},
-                {destination.des_lon})
-              </p>
-            </Paper>
-          </Grid>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={8} lg={9}>
+          <Paper>
+            <Box id="map" style={{ height: "85vh" }} />
+          </Paper>
         </Grid>
-      </>
+        <Grid item xs={12} md={4} lg={3}>
+          <Paper sx={{ padding: "8px", height: "85vh" }}>
+            <p style={{ margin: "8px", padding: "8px" }}>
+              <b>Drone's Location: </b>({coordinates.lat}, {coordinates.lon})
+            </p>
+            <p style={{ margin: "8px", padding: "8px" }}>
+              <b>Current altitude: </b>
+              {height}
+            </p>
+            <p style={{ margin: "8px", padding: "8px" }}>
+              <b>RSSI: </b>
+              {rssi}
+            </p>
+            <p style={{ margin: "8px", padding: "8px" }}>
+              <b>Next Destination: </b>({coordinates.lat}, {coordinates.lon})
+            </p>
+          </Paper>
+        </Grid>
+      </Grid>
     </Wrapper>
   );
 };

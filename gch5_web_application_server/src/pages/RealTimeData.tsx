@@ -1,14 +1,14 @@
-import StorageIntegration from "../components/StorageIntegration";
+import DataTable from "../components/DataTable";
 import Wrapper from "../components/Wrapper";
 
-const Data = () => {
+const RealTimeData = () => {
   return (
     <Wrapper title="Real Time Data">
       <>
-        <StorageIntegration></StorageIntegration>
+        <DataTable />
       </>
     </Wrapper>
   );
 };
 
-export default Data;
+export default RealTimeData;

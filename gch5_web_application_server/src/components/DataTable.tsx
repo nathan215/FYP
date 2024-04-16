@@ -1,3 +1,4 @@
+import { useContext, useState } from "react";
 import {
   Paper,
   Table,
@@ -5,14 +6,22 @@ import {
   TableCell,
   TableHead,
   TableRow,
+  TablePagination,
 } from "@mui/material";
 import Title from "./Title";
+import { WebSocketContext } from "./WebSocketContext";
 
-interface Props {
-  data: any[];
-}
+const DataTable = () => {
+  const { realTimeData } = useContext(WebSocketContext);
+  const [page, setPage] = useState(0);
+  const rowsPerPage = 20;
 
-const DataTable = ({ data }: Props) => {
+  console.log(realTimeData);
+
+  const handleChangePage = (event: any, newPage: any) => {
+    setPage(newPage);
+  };
+
   return (
     <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
       <Title>Real Time Data</Title>
@@ -27,23 +36,35 @@ const DataTable = ({ data }: Props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((item, index) => (
-            <TableRow key={index}>
-              <TableCell>{item.result.received_at}</TableCell>
-              <TableCell>{item.result.end_device_ids.device_id}</TableCell>
-              <TableCell>
-                {item.result.uplink_message?.frm_payload || "N/A"}
-              </TableCell>
-              <TableCell>
-                {item.result.uplink_message.rx_metadata[0]?.rssi || "N/A"}
-              </TableCell>
-              <TableCell>
-                {"N/A"},{"N/A"}
-              </TableCell>
+          {realTimeData && realTimeData.length > 0 ? (
+            realTimeData
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((data, index) => (
+                <TableRow key={index}>
+                  <TableCell>{data.time}</TableCell>
+                  <TableCell>{data.device_id}</TableCell>
+                  <TableCell>N/A</TableCell>
+                  <TableCell>{data.rssi}</TableCell>
+                  <TableCell>
+                    ({data.lon}, {data.lat})
+                  </TableCell>
+                </TableRow>
+              ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan={5}>No real-time data available</TableCell>
             </TableRow>
-          ))}
+          )}
         </TableBody>
       </Table>
+      <TablePagination
+        rowsPerPageOptions={[]}
+        component="div"
+        count={realTimeData ? realTimeData.length : 0}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+      />
     </Paper>
   );
 };
