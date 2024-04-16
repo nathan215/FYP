@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import threading
 import time
 import pandas as pd
-from shared_state import drone_data, station_data, initial_location
+from shared_state import drone_data, station_data, find_initial_location
 from .Coordinate_transfer import xy2ll
 import os
 # Get the directory of the current script
@@ -58,8 +58,8 @@ df = df.sample(frac=1).reset_index(drop=True)
 # change x, y to lat, lon
 for index, row in df.iterrows():
     df.at[index, 'lat'], df.at[index, 'lon'] = xy2ll(row['x'], row['y'],
-                                    start_lat= initial_location[0],
-                                    start_lon= initial_location[1])
+                                    start_lat= find_initial_location[0],
+                                    start_lon= find_initial_location[1])
 
 current_index = 0
 

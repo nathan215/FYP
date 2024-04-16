@@ -4,9 +4,9 @@ import threading
 import time
 import json
 import sys
-from shared_state import combined_data, initial_location, algorithm_use
+from shared_state import fix_combined_data, find_initial_location, algorithm_use
 from Algorithm.l3m_c_l3m_mre import l3m
-from Algorithm.my_nelder_mead import my_nelder_mead as nmg
+from Algorithm.nelder_mead import my_nelder_mead as nmg
 from Data_handle.Coordinate_transfer import xy2ll
 
 

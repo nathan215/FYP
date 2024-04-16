@@ -8,14 +8,15 @@ from Data_transmission.websocket_server import WebSocketServer
 from Data_handle.DataGenerate import start_generating_data
 from Data_handle.RealTimeDataCombine import start_combining_data
 from Data_handle.Simul_get_rssi import background_drone_add_rssi
-from Process.Real_Time_tag_predict import predict_point
 from Process.Algorithm_run import run_algorithm
 from Process.trace_setting import trace_setting
 from shared_state import (
     drone_data,
+    current_drone_location,
+    simulation_start_x_y,
     station_data,
-    combined_data,
-    initial_location,
+    find_combined_data,
+    fix_combined_data,
     device_id,
     algorithm_use,
     find_device_id,
@@ -23,7 +24,7 @@ from shared_state import (
 import time
 
 # setting
-mqtt_station = False
+mqtt_station = True
 mqtt_drone = False
 
 
@@ -40,14 +41,17 @@ def testing():
 
 
 def main():
+    global current_drone_location, simulation_start_x_y
     # Initialize WebSocket server
     websocket_server = WebSocketServer()
 
     # Start WebSocket server in a separate thread
     ws_thread = threading.Thread(target=websocket_server.start_server)
     ws_thread.start()
+    # change line and print statement
+    print("")
     print("WebSocket server started")
-
+    
     if mqtt_station:
         station_thread = threading.Thread(target=setup_station_mqtt)
         station_thread.start()
@@ -69,13 +73,26 @@ def main():
             combine_thread = threading.Thread(target=start_combining_data)
         # Start testing
         elif user_input == "simulation":
+            print("Enter the starting point for the drone(x,y):")
+            x = float(input("x: "))
+            y = float(input("y: "))
+            current_drone_location.append(x)
+            current_drone_location.append(y)
+            simulation_start_x_y.append(x)
+            simulation_start_x_y.append(y)
             background_drone_add_rssi_thread = threading.Thread(
                 target=background_drone_add_rssi, args=(websocket_server,)
             )
             background_drone_add_rssi_thread.start()
             trace_setting()
-            # predict_point(websocket_server)
             run_algorithm(websocket_server)
+        elif user_input == "testing":
+            background_drone_add_rssi_thread = threading.Thread(
+                target=background_drone_add_rssi, args=(websocket_server,)
+            )
+            background_drone_add_rssi_thread.start()
+            run_algorithm(websocket_server)
+
         else:
             print("Invalid input, please try again.")
             continue
@@ -83,3 +100,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    while True:
+        pass

@@ -1,10 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from shared_state import combined_data, current_drone_location
+from shared_state import find_combined_data, current_drone_location
 
 def draw_path():
-    if combined_data:
-        structured_array = np.array([(d['x'], d['y']) for d in combined_data], dtype=[('x', float), ('y', float)])
+    if find_combined_data:
+        structured_array = np.array([(d['x'], d['y']) for d in find_combined_data], dtype=[('x', float), ('y', float)])
         
         x_coords = structured_array['x']
         y_coords = structured_array['y']

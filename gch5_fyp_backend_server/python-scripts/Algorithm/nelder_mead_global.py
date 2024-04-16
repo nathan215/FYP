@@ -1,7 +1,6 @@
 import numpy as np
 import copy
 
-
 def estimate_new_start(all_points, maximizing=True, step_size=100 ):
 
     # Convert all_points to array for of points and values
@@ -21,9 +20,8 @@ def estimate_new_start(all_points, maximizing=True, step_size=100 ):
     
     return new_start
 
-
-def my_nelder_mead(f, x_start, step=100, no_improve_thr=2,
-                no_improv_break=25, max_iter=100,
+def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
+                no_improv_break=2, max_iter=100,
                 alpha=1., gamma=2., rho=-0.5, sigma=0.5):
     
     

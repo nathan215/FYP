@@ -8,6 +8,7 @@ def save_message_to_json(message):
         file.write('\n')  # Add newline to separate messages
 
 def on_message(client, userdata, msg):
+    print("msg")
     payload = json.loads(msg.payload.decode())
     message = {
         "device_id": payload["end_device_ids"]["device_id"],
@@ -31,4 +32,7 @@ def setup_station_mqtt():
     client.subscribe("v3/lora-fyp-testing-2023-24@ttn/devices/+/up")
     client.loop_start()  # Starts network loop in a separate thread
 
-
+if __name__ == "__main__":
+    setup_station_mqtt()
+    while True:
+        pass
