@@ -1,7 +1,8 @@
 import numpy as np
 import copy
 
-def estimate_new_start(all_points, maximizing=True, step_size=100 ):
+
+def estimate_new_start(all_points, maximizing=True, step_size=150 ):
 
     # Convert all_points to array for of points and values
     points = np.array([p[0] for p in all_points])
@@ -16,12 +17,12 @@ def estimate_new_start(all_points, maximizing=True, step_size=100 ):
     direction = np.mean(points, axis=0) - weighted_centroid
     direction_normalized = direction / np.linalg.norm(direction)
 
-    new_start = weighted_centroid - step_size * direction_normalized
-    
+    new_start =  all_points[-1][0] - step_size * direction_normalized
+    print("New start: ", new_start)
     return new_start
 
-def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
-                no_improv_break=2, max_iter=100,
+def my_nelder_mead(f, x_start, step=100, no_improve_thr= 15,
+                no_improv_break=4, max_iter=100,
                 alpha=1., gamma=2., rho=-0.5, sigma=0.5):
     
     
@@ -39,7 +40,7 @@ def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
         res.append([x, score])
         all_points.append([x, score])
 
-    iters = 0
+    iters = 2
     while True:
         # Order by best score.
         res.sort(key=lambda x: -x[1]) 
@@ -49,10 +50,8 @@ def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
         if max_iter and iters >= max_iter:
             return res[0] , all_points
         iters += 1
+        
 
-        movement = np.linalg.norm(res[0][0] - res[1][0]) 
-        if movement < no_improve_thr:
-            no_improv += 1
         if no_improv >= no_improv_break:
             new_start = estimate_new_start(all_points, maximizing=True, step_size=step)  # Assuming you're maximizing
             x_start = new_start
@@ -63,7 +62,7 @@ def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
                 x[i] = x[i] + step
                 score = f(x)
                 res.append([x, score])
-
+            iters += 2
         # Calculate the centroid of the simplex excluding the worst point.
         x0 = [0.] * dim
         for tup in res[:-1]:
@@ -80,7 +79,7 @@ def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
             res.append([xr, rscore])
             continue
 
-        # Expansion.
+        # Expansion.    
         if rscore > res[0][1]:
             xe = x0 + gamma * (x0 - res[-1][0])
             escore = f(xe)
@@ -101,13 +100,16 @@ def my_nelder_mead(f, x_start, step=100, no_improve_thr=10,
         if cscore > res[-1][1]:
             del res[-1]
             res.append([xc, cscore])
+            no_improv +=1
             continue
 
         # Reduction.
         x1 = res[0][0]
         nres = []
         for tup in res:
+            print("Reduction")
             redx = x1 + sigma * (tup[0] - x1)
             score = f(redx)
             nres.append([redx, score])
         res = nres
+        no_improv +=1

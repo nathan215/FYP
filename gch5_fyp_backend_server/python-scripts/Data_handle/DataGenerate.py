@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import threading
 import time
 import pandas as pd
-from shared_state import drone_data, station_data, find_initial_location
+from shared_state import drone_data, station_data, find_initial_location, find_device_id, fix_device_id
 from .Coordinate_transfer import xy2ll
 import os
 # Get the directory of the current script
@@ -90,7 +90,7 @@ def read_station_data():
         new_station_data = {
             'time': datetime.now().isoformat(),  # Simulate real-time emission
             'rssi': row['rssi'],
-            'device_id': 'test_device_id'
+            'device_id': 'testing_1'
         }
         station_data.append(new_station_data)
         time.sleep(2)  # Wait for 2 seconds before checking again

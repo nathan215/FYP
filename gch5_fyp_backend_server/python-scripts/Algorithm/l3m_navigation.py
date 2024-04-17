@@ -5,7 +5,7 @@ from .path_loss_algorithm import l3m, l3m_c, l3m_mre
 from shared_state import Z0, alpha
 
 
-def move_towards_l3m(f, x_start, step=50, max_iter=100,all_points=[]):
+def move_towards_l3m(f, x_start, step=50, max_iter= 40 ,all_points=[]):
     
     data_entries = [{'x': point['x'], 'y': point['y'], 'rssi': point['rssi']} for point in all_points]
     df = pd.DataFrame(data_entries)
@@ -22,6 +22,7 @@ def move_towards_l3m(f, x_start, step=50, max_iter=100,all_points=[]):
         if len(df) > 8:
             df = df.drop(index)
         
+        estimated_position = estimated_position.round(2)
         last_position = (all_points[-1]['x'], all_points[-1]['y'])
         # if the distance is smaller than step, move to the estimated position
         if np.linalg.norm(estimated_position - last_position) < step:
@@ -31,11 +32,11 @@ def move_towards_l3m(f, x_start, step=50, max_iter=100,all_points=[]):
                 new_position = last_position + step * np.array([np.cos(angle), np.sin(angle)])
             rssi = f(new_position)
         else:
-            rssi = f(estimated_position)
             new_position = last_position + step * (estimated_position - last_position) / np.linalg.norm(estimated_position - last_position)
+            rssi = f(new_position)
         
         all_points.append({'x': new_position[0], 'y': new_position[1], 'rssi': rssi})
-        rssi = rssi.round(2)
+        rssi = round(rssi, 2)
         new_position = new_position.round(2)
         df = pd.concat([df, pd.DataFrame([{'x': new_position[0], 'y': new_position[1], 'rssi': rssi}])], ignore_index=True)
     

@@ -15,16 +15,14 @@ from .path_draw import draw_path
 import threading
 # This function is used to receive the rssi value of the drone
 def rssi_receive(x, websocket_server):
-    
     lon, lat = xy2ll(x[0], x[1], find_initial_location[0], find_initial_location[1])
     x_re = {"type": "predict_location", "data": {"lon": lon, "lat": lat}}
-    print(f"Sending predicted location: {x_re}")
+    # print(f"Sending predicted location: {x_re}")
     websocket_server.send_message(x_re)
     draw_path()
     rssi = None
     fly_to_point(x)
     
-
     time.sleep(0.5)
     while True:
         if np.linalg.norm(np.array(current_drone_location) - np.array(x)) <= 0.01:
@@ -34,11 +32,9 @@ def rssi_receive(x, websocket_server):
                     rssi = data["rssi"]
             if rssi is not None:
                 print(f"Received RSSI: {rssi} at {x}")
-                return -rssi
+                return rssi
             else:
-                print(
-                    "RSSI data not found for the current location. Waiting..."
-                )
+                # print("RSSI data not found for the current location. Waiting...")
                 time.sleep(0.5)
 
 def caculate_parameter():
@@ -47,7 +43,7 @@ def caculate_parameter():
         print("Use the path loss parameters by the device")
         if len(fix_combined_data) < 3:
             print("The number of data points is less than 3, use the default path loss parameters")
-            Z0, alpha = -40,2
+            Z0, alpha = - 64,1.5
         else:
             Z0, alpha,error = compute_parameters_linear(fix_combined_data)
             print("The path loss parameters are: ",Z0,alpha,error)
@@ -60,7 +56,7 @@ def run_algorithm(websocket_server):
     # clean find_combined_data and fix_combined_data
     find_combined_data.clear()
     fix_combined_data.clear()
-        
+
     current_drone_location_array = np.array(current_drone_location)
     if algorithm_use[0] == "nelder_mead":
         print("start nelder_mead algorithm")
@@ -76,13 +72,32 @@ def run_algorithm(websocket_server):
     elif algorithm_use[0] == "l3m":
 
         print("Please randomly move the drone to collect data for the algorithm")
-        x,y = current_drone_location
-        fly_to_point([x+100,y])
-        fly_to_point([x+100,y+100])
-        if find_device_id:
+        print("The current location of the drone is: ", current_drone_location)
+        target = [current_drone_location[0] -50, current_drone_location[1] ]
+        lon, lat = xy2ll(target[0], target[1], find_initial_location[0], find_initial_location[1]) 
+        xre = {"type": "predict_location", "data": {"lon": lon, "lat": lat}}
+        websocket_server.send_message(xre)
+        print("Sending predicted location: ", xre)
+        fly_to_point(target)
+        while True:
+            if np.linalg.norm(np.array(current_drone_location) - np.array(target)) <= 0.01:
+                break
+
+        target = [current_drone_location[0] -50, current_drone_location[1] -50]
+        lon, lat = xy2ll( target[0], target[1], find_initial_location[0], find_initial_location[1])
+        xre = {"type": "predict_location", "data": {"lon": lon, "lat": lat}}
+        websocket_server.send_message(xre)
+        print("Sending predicted location: ", xre)
+        fly_to_point(target)
+        while True:
+            if np.linalg.norm(np.array(current_drone_location) - np.array(target)) <= 0.01:
+                break
+        
+        if fix_device_id:
             thread = threading.Thread(target=caculate_parameter)
             thread.start()
         print("start l3m algorithm")
+        current_drone_location_array = np.array(current_drone_location)
         minimum, points_evaluated = move_towards_l3m(
             lambda x: rssi_receive(x, websocket_server),
             current_drone_location_array,

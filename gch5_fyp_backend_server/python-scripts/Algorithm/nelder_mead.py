@@ -6,28 +6,28 @@
 import numpy as np
 import copy
 
-def my_nelder_mead(f, x_start, step=50, no_improve_thr=10e-6,
-                no_improv_break=20, max_iter=30,
+def my_nelder_mead(f, x_start, step=100, no_improve_thr=3,
+                no_improv_break=10, max_iter=100,
                 alpha=1., gamma=2., rho=-0.5, sigma=0.5):
-   
+    
     # Initialize the simplex.
     dim = len(x_start)
     prev_best = f(x_start)
     no_improv = 0
     res = [[x_start, prev_best]]
-    all_points = [x_start]  # Initialize the list to store all evaluated points
-    
+    all_points = [[x_start, prev_best]]  # Initialize the list to store all evaluated points
+
     for i in range(dim):
         x = copy.copy(x_start)
         x[i] = x[i] + step
         score = f(x)
         res.append([x, score])
-        all_points.append(x)  # Store the evaluated point
+        all_points.append([x, score])
 
     iters = 0
     while True:
         # Order by best score.
-        res.sort(key=lambda x: x[1]) 
+        res.sort(key=lambda x: -x[1]) 
         best = res[0][1]
 
         # Break after max_iter.
@@ -35,15 +35,11 @@ def my_nelder_mead(f, x_start, step=50, no_improve_thr=10e-6,
             return res[0] , all_points
         iters += 1
 
-        # Break after no_improv_break iterations with no improvement.
-        if best < prev_best - no_improve_thr:
-            no_improv = 0
-            prev_best = best
-        else:
+        movement = np.linalg.norm(res[0][0] - res[1][0]) 
+        if movement < no_improve_thr:
             no_improv += 1
-
         if no_improv >= no_improv_break:
-            return res[0] , all_points
+            return res[0], all_points
 
         # Calculate the centroid of the simplex excluding the worst point.
         x0 = [0.] * dim
@@ -55,27 +51,22 @@ def my_nelder_mead(f, x_start, step=50, no_improve_thr=10e-6,
         # Reflection.
         xr = x0 + alpha * (x0 - res[-1][0])
         rscore = f(xr)
-        all_points.append(xr)  # Store the evaluated point
-        # print(f"Trying reflect: {xr}")
-        if res[0][1] <= rscore < res[-2][1]:
-            # print(f"Reflection successful, {res[-1][0]} out")
+        all_points.append([xr, rscore])  # Store the evaluated point
+        if res[0][1] >= rscore > res[-2][1]:
             del res[-1]
             res.append([xr, rscore])
             continue
 
         # Expansion.
-        if rscore < res[0][1]:
+        if rscore > res[0][1]:
             xe = x0 + gamma * (x0 - res[-1][0])
             escore = f(xe)
-            # print(f"Trying expand: {xe}")
-            all_points.append(xe)  # Store the evaluated point
-            if escore < rscore:
-                # print(f"Expansion successful, {res[-1][0]} out")
+            all_points.append([xe, escore])  # Store the evaluated point
+            if escore > rscore:
                 del res[-1]
                 res.append([xe, escore])
                 continue
             else:
-                # print(f"Expansion failed, reflection successful, {res[-1][0]} out")
                 del res[-1]
                 res.append([xr, rscore])
                 continue
@@ -83,13 +74,10 @@ def my_nelder_mead(f, x_start, step=50, no_improve_thr=10e-6,
         # Contraction.
         xc = x0 + rho * (x0 - res[-1][0])
         cscore = f(xc)
-        # print(f"Trying contract: {xc}")
-        all_points.append(xc)  # Store the evaluated point
-        if cscore < res[-1][1]:
-            # print(f"Contraction successful, {res[-1][0]} out")
+        all_points.append([xc,cscore])  # Store the evaluated point
+        if cscore > res[-1][1]:
             del res[-1]
             res.append([xc, cscore])
-            
             continue
 
         # Reduction.

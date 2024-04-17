@@ -50,6 +50,7 @@ def process_combined_data(new_station_point, websocket_server):
             inter_lon, inter_lat, inter_height = interpolate_location(
                 drone_data[i], drone_data[i + 1], new_station_point["time"]
             )
+
             combine_data = {
                 "type": "real_time_data",
                 "data": {
@@ -62,7 +63,7 @@ def process_combined_data(new_station_point, websocket_server):
                 },
             }
 
-            if find_device_id[0] == new_station_point["device_id"]:
+            if find_device_id  and  find_device_id[0] == new_station_point["device_id"]:
                 x, y = ll2xy(inter_lon, inter_lat, find_initial_location[0], find_initial_location[1])
                 entry = {
                     "x": x,
@@ -70,18 +71,18 @@ def process_combined_data(new_station_point, websocket_server):
                     "rssi": new_station_point["rssi"]
                 }
                 find_combined_data.append(entry)
-            if fix_device_id[0] == new_station_point["device_id"]:
+
+            if fix_device_id and fix_device_id[0] == new_station_point["device_id"]:
                 x, y = ll2xy(inter_lon, inter_lat, fix_initial_location[0], fix_initial_location[1])
                 entry = {
                     "x": x,
                     "y": y,
                     "rssi": new_station_point["rssi"]
                 }
-                fix_combined_data.append(entry)
 
             save_message_to_json(combine_data)  # Optionally save to file
             websocket_server.send_message(combine_data)
-            print("Combined data sent:", combine_data)
+            # print("Combined data sent:", combine_data)
             return combine_data
     return None
 
@@ -94,6 +95,9 @@ def start_combining_data_once(websocket_server):
                 # Combined data is now sent directly using send_data in process_combined_data function
                 station_data.pop(0)
             else:
+                if station_data[0]['time'] < drone_data[0]['time']:
+                    station_data.pop(0)
+                print("No drone data to combine with station data")
                 time.sleep(0.5)
         else:
             time.sleep(0.5)

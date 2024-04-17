@@ -41,7 +41,6 @@ def testing():
 
 
 def main():
-    global current_drone_location, simulation_start_x_y
     # Initialize WebSocket server
     websocket_server = WebSocketServer()
 
@@ -76,15 +75,15 @@ def main():
             print("Enter the starting point for the drone(x,y):")
             x = float(input("x: "))
             y = float(input("y: "))
-            current_drone_location.append(x)
-            current_drone_location.append(y)
-            simulation_start_x_y.append(x)
-            simulation_start_x_y.append(y)
+            current_drone_location[0] = x
+            current_drone_location[1] = y
+            simulation_start_x_y = [x, y]
             background_drone_add_rssi_thread = threading.Thread(
                 target=background_drone_add_rssi, args=(websocket_server,)
             )
             background_drone_add_rssi_thread.start()
             trace_setting()
+            time.sleep(3)
             run_algorithm(websocket_server)
         elif user_input == "testing":
             background_drone_add_rssi_thread = threading.Thread(

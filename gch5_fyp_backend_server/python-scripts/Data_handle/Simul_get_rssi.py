@@ -32,11 +32,22 @@ def interpolate_rssi(x, y, df):
             print("ERROR To imterpolate rssi value")
         return interpolated_rssi[0]
     else:
-        x1,x2 = int(x),int(x)+1
-        y1,y2 = int(y),int(y)+1
-        # average of 4 points
-        interpolated_rssi = (df[(df['x'] == x1) & (df['y'] == y1)]['rssi'].values[0] + df[(df['x'] == x1) & (df['y'] == y2)]['rssi'].values[0] + df[(df['x'] == x2) & (df['y'] == y1)]['rssi'].values[0] + df[(df['x'] == x2) & (df['y'] == y2)]['rssi'].values[0])/4
-        return interpolated_rssi
+        if x > 500 or x < -500 or y > 500 or y < -500:
+            distance = np.sqrt(x**2 + y**2)
+            return -64 - 10 * 1.5 * np.log10(distance)
+        else:
+            x1 = int(x)
+            x2 = x1 + 1
+            y1 = int(y)
+            y2 = y1 + 1
+            z11 = df[(df['x'] == x1) & (df['y'] == y1)]['rssi'].values[0]
+            z12 = df[(df['x'] == x1) & (df['y'] == y2)]['rssi'].values[0]
+            z21 = df[(df['x'] == x2) & (df['y'] == y1)]['rssi'].values[0]
+            z22 = df[(df['x'] == x2) & (df['y'] == y2)]['rssi'].values [0]
+            z = z11 * (x2 - x) * (y2 - y) + z21 * (x - x1) * (y2 - y) + z12 * (x2 - x) * (y - y1) + z22 * (x - x1) * (y - y1)
+            # left 2 decimal
+            return round(z,2)
+            
     
 # Continuous drone simulation and data combination
 def rt_drone_simul_rssi_combine(websocket_server):
