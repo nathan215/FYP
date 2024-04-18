@@ -7,8 +7,8 @@ import {
   TableHead,
   TableRow,
   TablePagination,
+  Typography,
 } from "@mui/material";
-import Title from "./Title";
 import { WebSocketContext } from "./WebSocketContext";
 
 const DataTable = () => {
@@ -24,7 +24,9 @@ const DataTable = () => {
 
   return (
     <Paper sx={{ p: 2, display: "flex", flexDirection: "column" }}>
-      <Title>Real Time Data</Title>
+      <Typography component="h2" variant="h6" color="primary" gutterBottom>
+        Real Time Data
+      </Typography>
       <Table size="small">
         <TableHead>
           <TableRow>

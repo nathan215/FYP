@@ -1,10 +1,16 @@
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import Wrapper from "../components/Wrapper";
 import CustomCard from "../components/CustomCard";
 import MapCard from "../components/MapCard";
 import BackendData from "../components/BackendData";
+import { SpaceBar } from "@mui/icons-material";
 
 const Dashboard = () => {
+  const handleClearLocalStorage = () => {
+    localStorage.clear();
+    // Additional logic or actions after clearing localStorage
+    // console.log("Remaining Space:", localStorage.length + " bytes");
+  };
   return (
     <Wrapper title="Dashboard">
       <>
@@ -27,6 +33,11 @@ const Dashboard = () => {
           </Grid>
           <Grid item xs={12}>
             <BackendData />
+          </Grid>
+          <Grid item xs={12}>
+            <Button variant="contained" onClick={handleClearLocalStorage}>
+              Clear Local Storage
+            </Button>
           </Grid>
         </Grid>
       </>

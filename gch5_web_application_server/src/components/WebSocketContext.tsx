@@ -1,5 +1,4 @@
-import React, { ReactNode, createContext, useEffect, useState } from "react";
-
+import { ReactNode, createContext, useEffect, useState } from "react";
 interface RealTimeData {
   device_id: string;
   time: string;
@@ -8,12 +7,10 @@ interface RealTimeData {
   lat: number;
   height: number;
 }
-
 interface PredictedLocation {
   lon: number;
   lat: number;
 }
-
 interface WebSocketContextProps {
   realTimeData: RealTimeData[] | null;
   predictedLocation: PredictedLocation[] | null;
@@ -23,7 +20,6 @@ const WebSocketContext = createContext<WebSocketContextProps>({
   realTimeData: null,
   predictedLocation: null,
 });
-
 interface WebSocketProviderProps {
   children: ReactNode;
 }
