@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 
 
 app = FastAPI()
+public_ip = "10.89.40.97"
 
 
 @app.get("/login")
@@ -17,4 +18,4 @@ async def pilot_login():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=5172)
+    uvicorn.run(app, host=public_ip, port=5172)

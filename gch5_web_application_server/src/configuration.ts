@@ -1,1 +1,2 @@
-export const websocketURL = "ws://10.89.40.97:9001";
+const publicIp = "10.89.40.97";
+export const websocketURL = `ws://${publicIp}:9001`;

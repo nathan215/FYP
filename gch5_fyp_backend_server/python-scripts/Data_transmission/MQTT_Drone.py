@@ -50,7 +50,6 @@ def handle_rc_osd_message(message: dict):
         "latitude": data["latitude"],
         "longitude": data["longitude"],
     }
-    # asyncio.run(send_to_websocket(json.dumps(msg)))
     save_message_to_json(msg, "RemoteController_data.json")
 
 
@@ -63,7 +62,6 @@ def handle_drone_osd_message(message: dict):
         "height": data["height"],
     }
     save_message_to_json(msg, "Drone_data.json")
-    # asyncio.run(send_to_websocket(json.dumps(msg)))
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -87,6 +85,7 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         elif DRONE_SN in msg.topic:
             handle_drone_osd_message(message)
 
+
 def setup_drone_mqtt():
     drone_client = mqtt.Client(
         callback_api_version=mqtt.CallbackAPIVersion.VERSION2, transport="tcp"
@@ -96,6 +95,7 @@ def setup_drone_mqtt():
     drone_client.on_subscribe = on_subscribe
     drone_client.connect("10.89.40.97", 1883, 60)
     drone_client.loop_forever()
+
 
 if __name__ == "__main__":
     setup_drone_mqtt()

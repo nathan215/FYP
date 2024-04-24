@@ -2,9 +2,11 @@
 import json
 from websocket_server import WebsocketServer
 
+public_ip = "10.89.40.97"
+
 
 class WebSocketServer:
-    def __init__(self, port=9001, host="10.89.40.97"):
+    def __init__(self, port=9001, host=public_ip):
         self.port = port
         self.host = host
         self.server = WebsocketServer(port=self.port, host=self.host)
