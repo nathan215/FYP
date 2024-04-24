@@ -4,7 +4,7 @@ from websocket_server import WebsocketServer
 
 
 class WebSocketServer:
-    def __init__(self, port=9001, host="127.0.0.1"):
+    def __init__(self, port=9001, host="10.89.40.97"):
         self.port = port
         self.host = host
         self.server = WebsocketServer(port=self.port, host=self.host)

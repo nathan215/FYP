@@ -77,7 +77,7 @@
 
         // API Module
         var api_params = JSON.stringify({
-          host: "http://10.89.40.97:5172", // {URI-scheme}://{Endpoint}
+          host: "https://aaea-185-213-82-71.ngrok-free.app/", // {URI-scheme}://{Endpoint}
           token: "X-Auth-Token", // The header will carry the X-Auth-Token.
         });
         log(
@@ -91,27 +91,26 @@
 
         // WS Module
         // var ws_params = JSON.stringify({
-        //   host: "wss://10.89.40.97:5050", // wss://xxx.xxxx.xxx:8883
-        //   token: "X-Auth-Token", //Tokens will be encoded and spliced into x-Auth-token.
+        //   host: "ws://10.89.40.97:9001", // wss://xxx.xxxx.xxx:8883
+        //   token: "x-Auth-token", //Tokens will be encoded and spliced into x-Auth-token.
         //   connectCallback: "js_callback",
         // });
         // log(
         //   "Load Component: ws " +
-        //     window.djiBridge.platformLoadComponent("ws", ws_params)
-        // +
-        // "\n Connection status: " +
-        // window.djiBridge.wsGetConnectState() +
-        // "\n Connect websocket: " +
-        // window.djiBridge.wsConnect(
-        //   ws_params.host,
-        //   ws_params.token,
-        //   ws_params.callback
-        // ) +
-        // "\n Connection status: " +
-        // window.djiBridge.wsGetConnectState()
-        // +
-        // "\nSending Message: " +
-        // window.djiBridge.wsSend("CONNECT TO RC!!!")
+        //     window.djiBridge.platformLoadComponent("ws", ws_params) +
+        //     "\n Connection status: " +
+        //     window.djiBridge.wsGetConnectState() +
+        //     "\n Connect websocket: " +
+        //     window.djiBridge.wsConnect(
+        //       ws_params.host,
+        //       ws_params.token,
+        //       ws_params.callback
+        //     ) +
+        //     "\n Connection status: " +
+        //     window.djiBridge.wsGetConnectState()
+        //   // +
+        //   // "\nSending Message: " +
+        //   // window.djiBridge.wsSend("CONNECT TO RC!!!")
         // );
 
         // // MAP Module
@@ -123,6 +122,8 @@
         //   "Load Component: map " +
         //     window.djiBridge.platformLoadComponent("map", map_params)
         // );
+        // window.open("https://cdd3-185-213-82-239.ngrok-free.app");
+        window.open("https://7326-175-159-121-97.ngrok-free.app");
       });
 
       // Log-out button

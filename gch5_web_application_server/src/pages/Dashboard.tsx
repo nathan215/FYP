@@ -3,7 +3,6 @@ import Wrapper from "../components/Wrapper";
 import CustomCard from "../components/CustomCard";
 import MapCard from "../components/MapCard";
 import BackendData from "../components/BackendData";
-import { SpaceBar } from "@mui/icons-material";
 
 const Dashboard = () => {
   const handleClearLocalStorage = () => {

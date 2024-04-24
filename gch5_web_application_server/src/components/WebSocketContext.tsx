@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from "react";
+import { websocketURL } from "../configuration";
 interface RealTimeData {
   device_id: string;
   time: string;
@@ -31,7 +32,7 @@ const WebSocketProvider = ({ children }: WebSocketProviderProps) => {
   >(null);
 
   useEffect(() => {
-    const socket = new WebSocket("ws://localhost:9001");
+    const socket = new WebSocket(websocketURL);
     socket.onmessage = (event) => {
       const incomingData = JSON.parse(event.data);
       console.log(incomingData);
