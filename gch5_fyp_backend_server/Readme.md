@@ -3,18 +3,18 @@
 The backend server is designed to handle data received from drones and various sources (e.g., TTN), process this data through algorithms, and transmit the results. It supports operations in two modes: data collection and simulation for algorithm testing.
 
 ## Directory Structure
-
-/backend_server
+```
+backend_server
 │
 ├── python_script/
 │ ├── Algorithm/
 │ │ ├── l3m_navigation.py # Drone navigation using path loss function localization
-│ │ └── nelder_mead.py # Standard Nelder-Mead optimization
+│ │ ├── nelder_mead.py # Standard Nelder-Mead optimization
 │ │ └── nelder_mead_global.py # Enhanced Nelder-Mead avoiding local maxima
 │ ├── Data_handle/
 │ │ ├── Coordinate_transfer.py # Converts lat/lon to Cartesian coordinates (x, y)
 │ │ ├── RealTimeDataCombine.py # Combines drone and station data via interpolation
-│ │ └── DataGenerate.py # Generates simulation data
+│ │ ├── DataGenerate.py # Generates simulation data
 │ │ └── Simul_get_rssi.py # Retrieves RSSI data for simulations
 │ ├── Data_transmission/
 │ │ ├── MQTT_Drone.py # Interfaces with DJI Pilot2 API via MQTT
@@ -29,6 +29,7 @@ The backend server is designed to handle data received from drones and various s
 ├── src/ # Currently unused
 ├── Testing_Html/ # HTML files for testing
 └── (data folders and results) # Directories for storing data and results
+```
 
 ## Installation and Execution
 
