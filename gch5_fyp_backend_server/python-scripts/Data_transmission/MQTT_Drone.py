@@ -5,6 +5,8 @@ import asyncio
 import websockets
 import paho.mqtt.client as mqtt
 import datetime
+dir_path = os.path.dirname(os.path.realpath(__file__))
+file_path = os.path.join(dir_path, '..', '..', 'drone_data.json')
 
 RC_SN = "4LFCL54005FA25"
 DRONE_SN = "1581F6GKB235F00400CD"
@@ -18,7 +20,7 @@ DRONE_SN = "1581F6GKB235F00400CD"
 
 
 def save_message_to_json(message, filename):
-    with open(filename, "a") as file:
+    with open(file_path, "a") as file:
         json.dump(message, file)
         file.write("\n")  # Add newline to separate messages
 
@@ -46,7 +48,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 def handle_rc_osd_message(message: dict):
     data = message["data"]
     msg = {
-        "timestamp": int(datetime.datetime.now().timestamp()),
+        "timestamp": int(datetime.datetime.now().timestamp().isoformat()),
         "latitude": data["latitude"],
         "longitude": data["longitude"],
     }

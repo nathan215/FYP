@@ -13,19 +13,13 @@ from Process.trace_setting import trace_setting
 from shared_state import (
     drone_data,
     current_drone_location,
-    simulation_start_x_y,
-    station_data,
-    find_combined_data,
-    fix_combined_data,
     device_id,
-    algorithm_use,
-    find_device_id,
+    mqtt_station ,
+    mqtt_drone,
+    find_initial_location,
 )
 import time
 
-# setting
-mqtt_station = True
-mqtt_drone = False
 
 
 def testing():
@@ -50,28 +44,33 @@ def main():
     # change line and print statement
     print("")
     print("WebSocket server started")
-    
-    if mqtt_station:
-        station_thread = threading.Thread(target=setup_station_mqtt)
-        station_thread.start()
-    if mqtt_drone:
-        drone_thread = threading.Thread(target=setup_drone_mqtt)
-        drone_thread.start()
+
 
     while True:
         # ask for user input to do data collection or testing
         user_input = input(
-            "Do you want to do data collection, testing, or simulation test? (data/testing/simulation): "
+            "Do you want to do data collection, testing, or simulation test? (data/simulation): "
         )
 
         # Start data collection
         if user_input == "data":
-            if not device_id or not drone_data:
-                print("No device data received yet, please wait for a moment.")
-                continue
-            combine_thread = threading.Thread(target=start_combining_data)
+            if mqtt_station:
+                station_thread = threading.Thread(target=setup_station_mqtt)
+                station_thread.start()
+            if mqtt_drone:
+                drone_thread = threading.Thread(target=setup_drone_mqtt)
+                drone_thread.start()
+            # combine_thread = threading.Thread(target=start_combining_data)
+            # combine_thread.start()
+            while True:
+                pass
         # Start testing
         elif user_input == "simulation":
+            print("Enter the tag position(lon,lat):")
+            lon = float(input("lon: "))
+            lat = float(input("lat: "))
+            find_initial_location[0] = lon
+            find_initial_location[1] = lat
             print("Enter the starting point for the drone(x,y):")
             x = float(input("x: "))
             y = float(input("y: "))
@@ -85,13 +84,6 @@ def main():
             trace_setting()
             time.sleep(3)
             run_algorithm(websocket_server)
-        elif user_input == "testing":
-            background_drone_add_rssi_thread = threading.Thread(
-                target=background_drone_add_rssi, args=(websocket_server,)
-            )
-            background_drone_add_rssi_thread.start()
-            run_algorithm(websocket_server)
-
         else:
             print("Invalid input, please try again.")
             continue

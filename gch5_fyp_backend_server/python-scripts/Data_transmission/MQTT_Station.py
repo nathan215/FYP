@@ -1,20 +1,34 @@
 import paho.mqtt.client as mqtt
 import json
 from shared_state import station_data, device_id  # Import the shared data structure
+from dateutil import parser
+from datetime import datetime, timedelta
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+file_path = os.path.join(dir_path, '..', '..', 'station_data.json')
 
 def save_message_to_json(message):
-    with open('station_data.json', 'a') as file:
+    with open(file_path, 'a') as file:
         json.dump(message, file)
         file.write('\n')  # Add newline to separate messages
 
 def on_message(client, userdata, msg):
     print("msg")
     payload = json.loads(msg.payload.decode())
+    time_string = payload["uplink_message"]["received_at"]
+    time_m = parser.parse(time_string)
+    truncated_time_string = time_string[:-4] + 'Z'  # Remove last four characters before 'Z'
+    format = '%Y-%m-%dT%H:%M:%S.%fZ'
+    truncated_time = datetime.strptime(truncated_time_string, format)
+    time_m += timedelta(hours=8)
+    outformat = '%Y-%m-%dT%H:%M:%S.%f'
+    print("Time: ", time_m.strftime(outformat))
+    time_out = time_m.strftime(outformat)
     message = {
         "device_id": payload["end_device_ids"]["device_id"],
         "gateway_id": payload["uplink_message"]["rx_metadata"][0]["gateway_ids"]["gateway_id"],
         "rssi": payload["uplink_message"]["rx_metadata"][0]["rssi"],
-        "received_at": payload["uplink_message"]["rx_metadata"][0]["received_at"]
+        "received_at": time_out
     }
     if message['device_id'] not in device_id:
         device_id.append(message['device_id'])

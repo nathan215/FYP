@@ -15,3 +15,5 @@ algorithm_use = []
 data_path = 'simulated_rssi_dataset.csv'
 Z0 = -64
 alpha = 1.5
+mqtt_station = True
+mqtt_drone = False

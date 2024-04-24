@@ -6,10 +6,13 @@ from shared_state import drone_data, station_data, find_device_id, fix_device_id
     find_combined_data, fix_combined_data, find_initial_location, fix_initial_location
 import threading
 from Data_handle.Coordinate_transfer import ll2xy
+import os 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+file_path = os.path.join(dir_path, '..', '..', 'combined.json')
 
 # Save the data to json file
 def save_message_to_json(message):
-    with open("combined.json", "a") as file:
+    with open(file_path, "a") as file:
         json.dump(message, file)
         file.write("\n")  # Add newline to separate messages
 
