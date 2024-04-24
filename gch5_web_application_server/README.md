@@ -1,4 +1,17 @@
-# React + TypeScript + Vite
+# GCH5 FYP Web Application
+1. Go to src/configuration.ts to change the `publicIp`
+2. Go to the terminal and run `npm run dev`
+
+The web application will run on port 5173, with a websocket listening to port 9001. For more details about the websocket, please refer to `gch5_fyp_backend_server`.
+
+## Pages
+* Dashboard
+* Map & Route
+* Camera View
+* Real-Time Data
+
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
