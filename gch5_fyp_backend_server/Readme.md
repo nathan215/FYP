@@ -2,6 +2,11 @@
 
 The backend server is designed to handle data received from drones and various sources (e.g., TTN), process this data through algorithms, and transmit the results. It supports operations in two modes: data collection and simulation for algorithm testing.
 
+## How to run data collection
+1. Install neccessary library.
+2. Execute python_script/Main.py to start server, enter data when asking for
+   ```"Do you want to do data collection, testing, or simulation test? (data/simulation):"  ```
+
 ## Directory Structure
 ```
 backend_server
