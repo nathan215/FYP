@@ -28,7 +28,7 @@ def on_message(client, userdata, msg):
         "device_id": payload["end_device_ids"]["device_id"],
         "gateway_id": payload["uplink_message"]["rx_metadata"][0]["gateway_ids"]["gateway_id"],
         "rssi": payload["uplink_message"]["rx_metadata"][0]["rssi"],
-        "received_at": time_out
+        "time": time_out
     }
     if message['device_id'] not in device_id:
         device_id.append(message['device_id'])

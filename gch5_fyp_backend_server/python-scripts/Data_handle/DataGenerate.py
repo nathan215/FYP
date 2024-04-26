@@ -99,7 +99,7 @@ def read_station_data():
 def start_generating_data():
     print("Starting data generation...")
     drone_thread = threading.Thread(target=read_drone_data)
-    station_thread = threading.Thread(target=read_station_data)
+    # station_thread = threading.Thread(target=read_station_data)
     drone_thread.start()
-    station_thread.start()
+    # station_thread.start()
 

@@ -60,8 +60,11 @@ def main():
             if mqtt_drone:
                 drone_thread = threading.Thread(target=setup_drone_mqtt)
                 drone_thread.start()
-            # combine_thread = threading.Thread(target=start_combining_data)
-            # combine_thread.start()
+            else:
+                start_generating_data()
+
+            combine_thread = threading.Thread(target=start_combining_data, args=(websocket_server,))
+            combine_thread.start()
             while True:
                 pass
         # Start testing

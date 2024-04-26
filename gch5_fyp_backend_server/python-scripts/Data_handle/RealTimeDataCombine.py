@@ -85,7 +85,11 @@ def process_combined_data(new_station_point, websocket_server):
 
             save_message_to_json(combine_data)  # Optionally save to file
             websocket_server.send_message(combine_data)
-            # print("Combined data sent:", combine_data)
+            
+            # delete previous drone data before i
+            for k in range(i):
+                drone_data.pop(0)
+
             return combine_data
     return None
 
@@ -95,7 +99,6 @@ def start_combining_data_once(websocket_server):
         if station_data:
             combined_data = process_combined_data(station_data[0], websocket_server)
             if combined_data:
-                # Combined data is now sent directly using send_data in process_combined_data function
                 station_data.pop(0)
             else:
                 if station_data[0]['time'] < drone_data[0]['time']:
@@ -103,6 +106,8 @@ def start_combining_data_once(websocket_server):
                 print("No drone data to combine with station data")
                 time.sleep(0.5)
         else:
+            if len(drone_data) > 10:
+                drone_data.pop(0)
             time.sleep(0.5)
 
 def start_combining_data(websocket_server):
