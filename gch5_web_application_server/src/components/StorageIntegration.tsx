@@ -14,7 +14,7 @@
 //             headers: {
 //               "Content-Type": "application/json",
 //               Authorization:
-//                 "Bearer NNSXS.WSDDXOK4YQ7PQOIJ7X3ZA6B2THH3AKBLS5VPX6A.E6CU6LPVPVWY7PBBPEPR4SPXU2AKP6V6EGOAQJLSGNRNEB4VNBHQ", // Replace with your actual access token
+//                 "Bearer <TTN_API_KEY>", // Replace with your actual access token
 //             },
 //           }
 //         );

@@ -1,3 +1,4 @@
+import os
 import psycopg2
 import random
 
@@ -25,7 +26,7 @@ def l3m_w(df, Z0, alpha, estimated_locations):
 
 def get_random_data(limit=50, x_range=None, y_range=None, z_range=None, distance_range=None):
     # Connect to the PostgreSQL database
-    conn = psycopg2.connect(database="FYP", user="postgres", password="0000", host="localhost", port="5433")
+    conn = psycopg2.connect(database="FYP", user="postgres", password=os.environ.get("PGPASSWORD", ""), host="localhost", port="5433")
     cur = conn.cursor()
     
     query = "SELECT x, y, z, rssi FROM test_records WHERE 1=1 AND record_id=2"

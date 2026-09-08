@@ -25,10 +25,9 @@
     <ul id="logs"></ul>
     <script>
       // Developer Information
-      const APP_ID = 143053;
-      const LICENSE =
-        "o2GdwDw1aTR0pF40J4I9KrB7fMLfnN+fYiXuJTMXbYXmQ0UYhgZebO+W9TVtNw+v61UJuYzkEx+tOuxdNOVxlRgffbUEVvzPVppa1Abt6zCuHB8Aeu6t8RxIYG2PpCRKShEx+mgyYjD2oOnFEQn2iLhDelCqinsCkywKDcbfp/o=";
-      const APP_KEY = "eaca82d6debce66c22fe6eae8c66a03";
+      const APP_ID = "<YOUR_DJI_APP_ID>";
+      const LICENSE = "<YOUR_DJI_LICENSE>";
+      const APP_KEY = "<YOUR_DJI_APP_KEY>";
 
       var fieldList = document.getElementById("logs");
       var log = function (msg) {
@@ -54,10 +53,10 @@
 
         // Cloud Module Loaded && Thing Connection
         var register_params = JSON.stringify({
-          host: "tcp://10.89.40.97:1883", // mqtt address, example: tcp://xx.xx.xx.xx:xxx
+          host: "tcp://<BROKER_IP>:1883", // mqtt address, example: tcp://xx.xx.xx.xx:xxx
           connectCallback: "reg_calback", // js interface for connection status callbacks
           username: "admin",
-          password: "public12345678",
+          password: "<MQTT_PASSWORD>",
         });
         log(
           "Load Component: thing " +
@@ -77,7 +76,7 @@
 
         // API Module
         var api_params = JSON.stringify({
-          host: "http://10.89.40.97:5173", // {URI-scheme}://{Endpoint}
+          host: "http://<BROKER_IP>:5173", // {URI-scheme}://{Endpoint}
           token: "X-Auth-Token", // The header will carry the X-Auth-Token.
         });
         log(
@@ -91,7 +90,7 @@
 
         // WS Module
         // var ws_params = JSON.stringify({
-        //   host: "ws://10.89.40.97:9001", // wss://xxx.xxxx.xxx:8883
+        //   host: "ws://<BROKER_IP>:9001", // wss://xxx.xxxx.xxx:8883
         //   token: "x-Auth-token", //Tokens will be encoded and spliced into x-Auth-token.
         //   connectCallback: "js_callback",
         // });

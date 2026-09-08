@@ -41,7 +41,7 @@ def on_message(client, userdata, msg):
 def setup_station_mqtt():
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     client.on_message = on_message
-    client.username_pw_set("lora-fyp-testing-2023-24@ttn", "NNSXS.V5EPTIAZDKFR2LCYERNNKDWCN6M6FSNTYYNN4QI.EM7CPT7HWOWKX2ZPUP7GBLHRLKHY245DKXJSHETTJK5QQD277HLA")
+    client.username_pw_set(os.environ.get("TTN_MQTT_USERNAME", ""), os.environ.get("TTN_MQTT_PASSWORD", ""))
     client.connect("nam1.cloud.thethings.network", 1883, 60)
     client.subscribe("v3/lora-fyp-testing-2023-24@ttn/devices/+/up")
     client.loop_start()  # Starts network loop in a separate thread

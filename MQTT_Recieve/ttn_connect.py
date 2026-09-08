@@ -1,7 +1,8 @@
+import os
 from ttn import MQTTClient
 
-app_id = "lora-fyp-testing-2023-24"  # Replace with your TTN Application ID
-access_key = "NNSXS.VXHDZ5BNQ36IQTOZZ6QR2C6D5JCEONQCG7L2CKA.LUSJKHAIZAMFJ4ZXIKYZCE47FF5IZVU63QDKVT45DB7PWWMABAGQ"  # Replace with your TTN Access Key
+app_id = os.environ.get("TTN_APP_ID", "")  # Replace with your TTN Application ID
+access_key = os.environ.get("TTN_ACCESS_KEY", "")  # Replace with your TTN Access Key
 
 def uplink_callback(msg, client):
   print("Received message: ", msg)
